@@ -9,13 +9,39 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VenuesRouteImport } from './routes/venues'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as ApprovalsRouteImport } from './routes/approvals'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProgrammesIndexRouteImport } from './routes/programmes.index'
 import { Route as ProgrammesNewRouteImport } from './routes/programmes.new'
 import { Route as ProgrammesIdRouteImport } from './routes/programmes.$id'
 
+const VenuesRoute = VenuesRouteImport.update({
+  id: '/venues',
+  path: '/venues',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -24,6 +50,16 @@ const LoginRoute = LoginRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApprovalsRoute = ApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -49,16 +85,28 @@ const ProgrammesIdRoute = ProgrammesIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/approvals': typeof ApprovalsRoute
+  '/calendar': typeof CalendarRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
+  '/venues': typeof VenuesRoute
   '/programmes/$id': typeof ProgrammesIdRoute
   '/programmes/new': typeof ProgrammesNewRoute
   '/programmes/': typeof ProgrammesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/approvals': typeof ApprovalsRoute
+  '/calendar': typeof CalendarRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
+  '/venues': typeof VenuesRoute
   '/programmes/$id': typeof ProgrammesIdRoute
   '/programmes/new': typeof ProgrammesNewRoute
   '/programmes': typeof ProgrammesIndexRoute
@@ -66,8 +114,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/approvals': typeof ApprovalsRoute
+  '/calendar': typeof CalendarRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
+  '/venues': typeof VenuesRoute
   '/programmes/$id': typeof ProgrammesIdRoute
   '/programmes/new': typeof ProgrammesNewRoute
   '/programmes/': typeof ProgrammesIndexRoute
@@ -76,24 +130,42 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/approvals'
+    | '/calendar'
     | '/dashboard'
     | '/login'
+    | '/notifications'
+    | '/reports'
+    | '/settings'
+    | '/venues'
     | '/programmes/$id'
     | '/programmes/new'
     | '/programmes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/approvals'
+    | '/calendar'
     | '/dashboard'
     | '/login'
+    | '/notifications'
+    | '/reports'
+    | '/settings'
+    | '/venues'
     | '/programmes/$id'
     | '/programmes/new'
     | '/programmes'
   id:
     | '__root__'
     | '/'
+    | '/approvals'
+    | '/calendar'
     | '/dashboard'
     | '/login'
+    | '/notifications'
+    | '/reports'
+    | '/settings'
+    | '/venues'
     | '/programmes/$id'
     | '/programmes/new'
     | '/programmes/'
@@ -101,8 +173,14 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApprovalsRoute: typeof ApprovalsRoute
+  CalendarRoute: typeof CalendarRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
+  NotificationsRoute: typeof NotificationsRoute
+  ReportsRoute: typeof ReportsRoute
+  SettingsRoute: typeof SettingsRoute
+  VenuesRoute: typeof VenuesRoute
   ProgrammesIdRoute: typeof ProgrammesIdRoute
   ProgrammesNewRoute: typeof ProgrammesNewRoute
   ProgrammesIndexRoute: typeof ProgrammesIndexRoute
@@ -110,6 +188,34 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/venues': {
+      id: '/venues'
+      path: '/venues'
+      fullPath: '/venues'
+      preLoaderRoute: typeof VenuesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -122,6 +228,20 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/approvals': {
+      id: '/approvals'
+      path: '/approvals'
+      fullPath: '/approvals'
+      preLoaderRoute: typeof ApprovalsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -157,8 +277,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApprovalsRoute: ApprovalsRoute,
+  CalendarRoute: CalendarRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
+  NotificationsRoute: NotificationsRoute,
+  ReportsRoute: ReportsRoute,
+  SettingsRoute: SettingsRoute,
+  VenuesRoute: VenuesRoute,
   ProgrammesIdRoute: ProgrammesIdRoute,
   ProgrammesNewRoute: ProgrammesNewRoute,
   ProgrammesIndexRoute: ProgrammesIndexRoute,
