@@ -13,6 +13,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProgrammesIndexRouteImport } from './routes/programmes.index'
+import { Route as ProgrammesNewRouteImport } from './routes/programmes.new'
+import { Route as ProgrammesIdRouteImport } from './routes/programmes.$id'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -34,17 +36,31 @@ const ProgrammesIndexRoute = ProgrammesIndexRouteImport.update({
   path: '/programmes/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgrammesNewRoute = ProgrammesNewRouteImport.update({
+  id: '/programmes/new',
+  path: '/programmes/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgrammesIdRoute = ProgrammesIdRouteImport.update({
+  id: '/programmes/$id',
+  path: '/programmes/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/programmes/$id': typeof ProgrammesIdRoute
+  '/programmes/new': typeof ProgrammesNewRoute
   '/programmes/': typeof ProgrammesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/programmes/$id': typeof ProgrammesIdRoute
+  '/programmes/new': typeof ProgrammesNewRoute
   '/programmes': typeof ProgrammesIndexRoute
 }
 export interface FileRoutesById {
@@ -52,20 +68,43 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/programmes/$id': typeof ProgrammesIdRoute
+  '/programmes/new': typeof ProgrammesNewRoute
   '/programmes/': typeof ProgrammesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login' | '/programmes/'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/programmes/$id'
+    | '/programmes/new'
+    | '/programmes/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login' | '/programmes'
-  id: '__root__' | '/' | '/dashboard' | '/login' | '/programmes/'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/programmes/$id'
+    | '/programmes/new'
+    | '/programmes'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/programmes/$id'
+    | '/programmes/new'
+    | '/programmes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
+  ProgrammesIdRoute: typeof ProgrammesIdRoute
+  ProgrammesNewRoute: typeof ProgrammesNewRoute
   ProgrammesIndexRoute: typeof ProgrammesIndexRoute
 }
 
@@ -99,6 +138,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProgrammesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/programmes/new': {
+      id: '/programmes/new'
+      path: '/programmes/new'
+      fullPath: '/programmes/new'
+      preLoaderRoute: typeof ProgrammesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/programmes/$id': {
+      id: '/programmes/$id'
+      path: '/programmes/$id'
+      fullPath: '/programmes/$id'
+      preLoaderRoute: typeof ProgrammesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -106,6 +159,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
+  ProgrammesIdRoute: ProgrammesIdRoute,
+  ProgrammesNewRoute: ProgrammesNewRoute,
   ProgrammesIndexRoute: ProgrammesIndexRoute,
 }
 export const routeTree = rootRouteImport
