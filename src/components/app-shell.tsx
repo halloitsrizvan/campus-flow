@@ -1,4 +1,5 @@
-import { Link, useRouter, useRouterState } from "@tanstack/react-router";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   LayoutDashboard,
@@ -32,7 +33,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 
-type NavItem = { to: string; label: string; icon: React.ComponentType<{ className?: string }>; roles?: Role[] };
+type NavItem = {
+  to: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  roles?: Role[];
+};
 
 const NAV: NavItem[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -52,11 +58,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const notifications = useApp((s) => s.notifications);
   const markAllRead = useApp((s) => s.markAllNotificationsRead);
   const router = useRouter();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    if (!user) router.navigate({ to: "/login" });
+    if (!user) router.push("/login");
   }, [user, router]);
 
   useEffect(() => {
@@ -84,7 +90,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         )}
       >
         <div className="flex h-16 items-center justify-between border-b px-5">
-          <Link to="/dashboard" className="flex items-center gap-2">
+          <Link href="/dashboard" className="flex items-center gap-2">
             <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground font-bold">
               V
             </div>
@@ -108,7 +114,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               return (
                 <Link
                   key={item.to}
-                  to={item.to}
+                  href={item.to}
                   className={cn(
                     "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                     active
@@ -133,7 +139,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-3 rounded-md px-2 py-2">
             <Avatar className="h-9 w-9">
               <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
-                {user.name.split(" ").map((s) => s[0]).join("").slice(0, 2)}
+                {user.name
+                  .split(" ")
+                  .map((s) => s[0])
+                  .join("")
+                  .slice(0, 2)}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
@@ -205,7 +215,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   ))}
                 </div>
                 <Link
-                  to="/notifications"
+                  href="/notifications"
                   className="block border-t px-4 py-2 text-center text-xs font-medium text-primary hover:bg-muted/40"
                 >
                   View all
@@ -218,7 +228,11 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <Button variant="ghost" className="gap-2 pl-1.5 pr-2">
                   <Avatar className="h-7 w-7">
                     <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                      {user.name.split(" ").map((s) => s[0]).join("").slice(0, 2)}
+                      {user.name
+                        .split(" ")
+                        .map((s) => s[0])
+                        .join("")
+                        .slice(0, 2)}
                     </AvatarFallback>
                   </Avatar>
                   <span className="hidden text-sm font-medium sm:inline">{user.name}</span>
@@ -232,7 +246,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to="/settings">
+                  <Link href="/settings">
                     <SettingsIcon className="mr-2 h-4 w-4" /> Settings
                   </Link>
                 </DropdownMenuItem>
@@ -240,7 +254,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <DropdownMenuItem
                   onClick={() => {
                     logout();
-                    router.navigate({ to: "/login" });
+                    router.push("/login");
                   }}
                   className="text-destructive focus:text-destructive"
                 >
@@ -270,9 +284,7 @@ export function PageHeader({
     <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
       <div className="min-w-0">
         <h1 className="truncate text-2xl font-semibold tracking-tight">{title}</h1>
-        {description && (
-          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-        )}
+        {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>

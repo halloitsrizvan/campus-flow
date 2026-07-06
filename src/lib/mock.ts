@@ -13,12 +13,7 @@ export interface User {
 }
 
 export type ProgrammeStatus =
-  | "draft"
-  | "submitted"
-  | "union_approved"
-  | "teacher_approved"
-  | "rejected"
-  | "completed";
+  "draft" | "submitted" | "union_approved" | "teacher_approved" | "rejected" | "completed";
 
 export interface Programme {
   id: string;
@@ -68,7 +63,14 @@ export const VENUES: Venue[] = [
   { id: "v2", name: "Seminar Hall 1", capacity: 120, location: "Block B, 1F", active: true },
   { id: "v3", name: "Seminar Hall 2", capacity: 80, location: "Block B, 2F", active: true },
   { id: "v4", name: "Open Air Theatre", capacity: 800, location: "Campus Ground", active: true },
-  { id: "v5", name: "Conference Room", capacity: 40, location: "Block C, 3F", active: true, blocked: true },
+  {
+    id: "v5",
+    name: "Conference Room",
+    capacity: 40,
+    location: "Block C, 3F",
+    active: true,
+    blocked: true,
+  },
   { id: "v6", name: "Sports Ground", capacity: 1000, location: "North Campus", active: true },
 ];
 
@@ -116,10 +118,25 @@ export const PROGRAMMES: Programme[] = [
     budget: 85000,
     status: "teacher_approved",
     createdAt: d(-10),
-    attachments: [{ name: "poster.pdf", size: "1.2 MB" }, { name: "permission.pdf", size: "220 KB" }],
+    attachments: [
+      { name: "poster.pdf", size: "1.2 MB" },
+      { name: "permission.pdf", size: "220 KB" },
+    ],
     comments: [
-      { id: "c1", author: "Anita (Union)", role: "union", text: "Looks great. Budget approved.", at: d(-7) },
-      { id: "c2", author: "Prof. Menon", role: "teacher", text: "Approved. Coordinate with security.", at: d(-5) },
+      {
+        id: "c1",
+        author: "Anita (Union)",
+        role: "union",
+        text: "Looks great. Budget approved.",
+        at: d(-7),
+      },
+      {
+        id: "c2",
+        author: "Prof. Menon",
+        role: "teacher",
+        text: "Approved. Coordinate with security.",
+        at: d(-5),
+      },
     ],
     timeline: [
       { label: "Submitted by Wing", at: d(-10), done: true },
@@ -143,7 +160,15 @@ export const PROGRAMMES: Programme[] = [
     budget: 22000,
     status: "union_approved",
     createdAt: d(-4),
-    comments: [{ id: "c3", author: "Anita (Union)", role: "union", text: "Forwarded to faculty.", at: d(-2) }],
+    comments: [
+      {
+        id: "c3",
+        author: "Anita (Union)",
+        role: "union",
+        text: "Forwarded to faculty.",
+        at: d(-2),
+      },
+    ],
     timeline: [
       { label: "Submitted by Wing", at: d(-4), done: true },
       { label: "Union Approved", at: d(-2), done: true },
@@ -214,7 +239,15 @@ export const PROGRAMMES: Programme[] = [
     budget: 40000,
     status: "rejected",
     createdAt: d(-6),
-    comments: [{ id: "c4", author: "Anita (Union)", role: "union", text: "Venue conflict; please pick another date.", at: d(-3) }],
+    comments: [
+      {
+        id: "c4",
+        author: "Anita (Union)",
+        role: "union",
+        text: "Venue conflict; please pick another date.",
+        at: d(-3),
+      },
+    ],
     timeline: [
       { label: "Submitted", at: d(-6), done: true },
       { label: "Rejected by Union", at: d(-3), done: true },
@@ -246,11 +279,46 @@ export const PROGRAMMES: Programme[] = [
 ];
 
 export const NOTIFICATIONS: Notification[] = [
-  { id: "n1", title: "Programme Approved", message: "TechFest 2025 was approved by Prof. Menon.", at: d(-5), read: false, type: "success" },
-  { id: "n2", title: "New Submission", message: "Cultural Night is pending review.", at: d(-1), read: false, type: "info" },
-  { id: "n3", title: "Programme Rejected", message: "Robotics Expo was rejected — venue conflict.", at: d(-3), read: true, type: "danger" },
-  { id: "n4", title: "Venue Blocked", message: "Conference Room blocked for maintenance.", at: d(-2), read: true, type: "warning" },
-  { id: "n5", title: "Comment Added", message: "Anita commented on Inter-College Debate.", at: d(-2), read: false, type: "info" },
+  {
+    id: "n1",
+    title: "Programme Approved",
+    message: "TechFest 2025 was approved by Prof. Menon.",
+    at: d(-5),
+    read: false,
+    type: "success",
+  },
+  {
+    id: "n2",
+    title: "New Submission",
+    message: "Cultural Night is pending review.",
+    at: d(-1),
+    read: false,
+    type: "info",
+  },
+  {
+    id: "n3",
+    title: "Programme Rejected",
+    message: "Robotics Expo was rejected — venue conflict.",
+    at: d(-3),
+    read: true,
+    type: "danger",
+  },
+  {
+    id: "n4",
+    title: "Venue Blocked",
+    message: "Conference Room blocked for maintenance.",
+    at: d(-2),
+    read: true,
+    type: "warning",
+  },
+  {
+    id: "n5",
+    title: "Comment Added",
+    message: "Anita commented on Inter-College Debate.",
+    at: d(-2),
+    read: false,
+    type: "info",
+  },
 ];
 
 // ---- Zustand store (client-only mutable state) ----

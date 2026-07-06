@@ -56,8 +56,8 @@
   --radius: 0.625rem;
 
   /* Neutral surfaces */
-  --background: oklch(0.985 0.002 264);        /* #F8FAFC-ish */
-  --foreground: oklch(0.22 0.03 264);          /* slate-900 */
+  --background: oklch(0.985 0.002 264); /* #F8FAFC-ish */
+  --foreground: oklch(0.22 0.03 264); /* slate-900 */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.22 0.03 264);
   --popover: oklch(1 0 0);
@@ -76,7 +76,7 @@
   --accent: oklch(0.955 0.02 277);
   --accent-foreground: oklch(0.36 0.14 277);
 
-  --destructive: oklch(0.62 0.23 27);          /* #EF4444 */
+  --destructive: oklch(0.62 0.23 27); /* #EF4444 */
   --destructive-foreground: oklch(0.99 0.005 264);
 
   /* Emerald #10B981 */

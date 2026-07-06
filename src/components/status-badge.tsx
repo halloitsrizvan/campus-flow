@@ -1,7 +1,13 @@
 import { statusMeta, type ProgrammeStatus } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 
-export function StatusBadge({ status, className }: { status: ProgrammeStatus; className?: string }) {
+export function StatusBadge({
+  status,
+  className,
+}: {
+  status: ProgrammeStatus;
+  className?: string;
+}) {
   const m = statusMeta(status);
   return (
     <span

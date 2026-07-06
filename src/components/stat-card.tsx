@@ -31,7 +31,9 @@ export function StatCard({
           <div className="mt-2 text-2xl font-semibold tracking-tight">{value}</div>
           {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
         </div>
-        <div className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-lg", toneClasses[tone])}>
+        <div
+          className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-lg", toneClasses[tone])}
+        >
           {icon}
         </div>
       </div>
