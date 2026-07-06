@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../styles.css";
 import { Toaster } from "@/components/ui/sonner";
+import DbProvider from "@/components/db-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen bg-background text-foreground font-sans antialiased">
-        {children}
+        <DbProvider>{children}</DbProvider>
         <Toaster richColors position="top-right" />
       </body>
     </html>

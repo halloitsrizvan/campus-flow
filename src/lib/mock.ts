@@ -321,7 +321,7 @@ export const NOTIFICATIONS: Notification[] = [
   },
 ];
 
-// ---- Zustand store (client-only mutable state) ----
+// ---- Zustand store (client-only mutable state with DB persistence) ----
 interface AppState {
   user: User | null;
   programmes: Programme[];
@@ -329,6 +329,7 @@ interface AppState {
   notifications: Notification[];
   login: (username: string, role: Role) => void;
   logout: () => void;
+  fetchInitialData: () => Promise<void>;
   addProgramme: (p: Programme) => void;
   updateProgramme: (id: string, patch: Partial<Programme>) => void;
   addVenue: (v: Venue) => void;
@@ -337,11 +338,11 @@ interface AppState {
   markAllNotificationsRead: () => void;
 }
 
-export const useApp = create<AppState>((set) => ({
+export const useApp = create<AppState>((set, get) => ({
   user: null,
-  programmes: PROGRAMMES,
-  venues: VENUES,
-  notifications: NOTIFICATIONS,
+  programmes: [],
+  venues: [],
+  notifications: [],
   login: (username, role) => {
     const names: Record<Role, string> = {
       wing: "Rahul Menon",
@@ -364,21 +365,118 @@ export const useApp = create<AppState>((set) => ({
     });
   },
   logout: () => set({ user: null }),
-  addProgramme: (p) => set((s) => ({ programmes: [p, ...s.programmes] })),
-  updateProgramme: (id, patch) =>
-    set((s) => ({
-      programmes: s.programmes.map((p) => (p.id === id ? { ...p, ...patch } : p)),
-    })),
-  addVenue: (v) => set((s) => ({ venues: [...s.venues, v] })),
-  updateVenue: (id, patch) =>
-    set((s) => ({ venues: s.venues.map((v) => (v.id === id ? { ...v, ...patch } : v)) })),
-  removeVenue: (id) => set((s) => ({ venues: s.venues.filter((v) => v.id !== id) })),
-  markAllNotificationsRead: () =>
-    set((s) => ({ notifications: s.notifications.map((n) => ({ ...n, read: true })) })),
+  fetchInitialData: async () => {
+    console.log(
+      "fetchInitialData: initiating fetch requests to /api/venues, /api/programmes, /api/notifications...",
+    );
+    try {
+      const [resVenues, resProgrammes, resNotifications] = await Promise.all([
+        fetch("/api/venues").then((r) => {
+          console.log("fetchInitialData: /api/venues response status:", r.status);
+          return r.json();
+        }),
+        fetch("/api/programmes").then((r) => {
+          console.log("fetchInitialData: /api/programmes response status:", r.status);
+          return r.json();
+        }),
+        fetch("/api/notifications").then((r) => {
+          console.log("fetchInitialData: /api/notifications response status:", r.status);
+          return r.json();
+        }),
+      ]);
+      console.log("fetchInitialData: fetch results loaded successfully:", {
+        venuesCount: Array.isArray(resVenues) ? resVenues.length : "not an array",
+        programmesCount: Array.isArray(resProgrammes) ? resProgrammes.length : "not an array",
+        notificationsCount: Array.isArray(resNotifications)
+          ? resNotifications.length
+          : "not an array",
+      });
+      set({
+        venues: Array.isArray(resVenues) ? resVenues : [],
+        programmes: Array.isArray(resProgrammes) ? resProgrammes : [],
+        notifications: Array.isArray(resNotifications) ? resNotifications : [],
+      });
+    } catch (err) {
+      console.error("Failed to fetch initial database data:", err);
+    }
+  },
+  addProgramme: async (p) => {
+    try {
+      const res = await fetch("/api/programmes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(p),
+      });
+      const created = await res.json();
+      set((s) => ({ programmes: [created, ...s.programmes] }));
+    } catch (err) {
+      console.error("Failed to add programme:", err);
+    }
+  },
+  updateProgramme: async (id, patch) => {
+    try {
+      const res = await fetch(`/api/programmes/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+      const updated = await res.json();
+      set((s) => ({
+        programmes: s.programmes.map((p) => (p.id === id ? updated : p)),
+      }));
+    } catch (err) {
+      console.error("Failed to update programme:", err);
+    }
+  },
+  addVenue: async (v) => {
+    try {
+      const res = await fetch("/api/venues", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(v),
+      });
+      const created = await res.json();
+      set((s) => ({ venues: [...s.venues, created] }));
+    } catch (err) {
+      console.error("Failed to add venue:", err);
+    }
+  },
+  updateVenue: async (id, patch) => {
+    try {
+      const res = await fetch(`/api/venues/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+      const updated = await res.json();
+      set((s) => ({
+        venues: s.venues.map((v) => (v.id === id ? updated : v)),
+      }));
+    } catch (err) {
+      console.error("Failed to update venue:", err);
+    }
+  },
+  removeVenue: async (id) => {
+    try {
+      await fetch(`/api/venues/${id}`, { method: "DELETE" });
+      set((s) => ({ venues: s.venues.filter((v) => v.id !== id) }));
+    } catch (err) {
+      console.error("Failed to delete venue:", err);
+    }
+  },
+  markAllNotificationsRead: async () => {
+    try {
+      const res = await fetch("/api/notifications", { method: "PUT" });
+      const updatedList = await res.json();
+      set({ notifications: updatedList });
+    } catch (err) {
+      console.error("Failed to mark notifications read:", err);
+    }
+  },
 }));
 
 export function venueName(id: string): string {
-  return VENUES.find((v) => v.id === id)?.name ?? "Unknown venue";
+  return useApp.getState().venues.find((v) => v.id === id)?.name ?? "Unknown venue";
 }
 
 export function statusMeta(s: ProgrammeStatus) {
