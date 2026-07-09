@@ -6,8 +6,9 @@ import { useApp, type Role } from "@/lib/mock";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GraduationCap, ShieldCheck, Users2 } from "lucide-react";
+import { GraduationCap, ShieldCheck, Users2, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function LoginPage() {
   const [role, setRole] = useState<Role>("wing");
   const [username, setUsername] = useState("rahul.m");
   const [password, setPassword] = useState("demo1234");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) router.push("/dashboard");
@@ -29,17 +31,23 @@ export default function LoginPage() {
   }[] = [
     {
       id: "wing",
-      label: "Wing Member",
+      label: "Wing Admin",
       icon: Users2,
       blurb: "Register & manage your wing's programmes.",
     },
     {
       id: "union",
-      label: "Union Member",
+      label: "Union Admin",
       icon: ShieldCheck,
       blurb: "Approve, monitor and manage venues.",
     },
     { id: "teacher", label: "Teacher", icon: GraduationCap, blurb: "Final approval & oversight." },
+    {
+      id: "super_admin",
+      label: "Super Admin",
+      icon: Settings2,
+      blurb: "Manage roles and system users.",
+    },
   ];
 
   return (
@@ -106,15 +114,22 @@ export default function LoginPage() {
 
             <form
               className="mt-6 space-y-4"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                login(username, role);
-                router.push("/dashboard");
+                setLoading(true);
+                try {
+                  await login(username, password);
+                  router.push("/dashboard");
+                } catch (err) {
+                  toast.error(err instanceof Error ? err.message : "Login failed");
+                } finally {
+                  setLoading(false);
+                }
               }}
             >
               <div className="space-y-1.5">
                 <Label>Sign in as</Label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                   {roleOptions.map((o) => {
                     const Icon = o.icon;
                     const active = role === o.id;
@@ -122,7 +137,22 @@ export default function LoginPage() {
                       <button
                         key={o.id}
                         type="button"
-                        onClick={() => setRole(o.id)}
+                        onClick={() => {
+                          setRole(o.id);
+                          if (o.id === "super_admin") {
+                            setUsername("admin@campusflow.com");
+                            setPassword("admincf");
+                          } else if (o.id === "wing") {
+                            setUsername("rahul.m");
+                            setPassword("demo1234");
+                          } else if (o.id === "union") {
+                            setUsername("anita.s");
+                            setPassword("demo1234");
+                          } else if (o.id === "teacher") {
+                            setUsername("prof.menon");
+                            setPassword("demo1234");
+                          }
+                        }}
                         className={cn(
                           "flex flex-col items-center gap-1.5 rounded-lg border p-3 text-xs font-medium transition-colors",
                           active
@@ -163,8 +193,8 @@ export default function LoginPage() {
                 />
               </div>
 
-              <Button type="submit" className="w-full">
-                Sign in
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Signing in..." : "Sign in"}
               </Button>
 
               <p className="pt-2 text-center text-xs text-muted-foreground">

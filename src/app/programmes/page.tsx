@@ -22,7 +22,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CalendarPlus, ClipboardList, Search } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { CalendarPlus, ClipboardList, Search, Trash2, Edit2 } from "lucide-react";
+import { toast } from "sonner";
 import { format } from "date-fns";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -45,6 +54,12 @@ export default function ProgrammesPage() {
   const [status, setStatus] = useState<string>("all");
   const [category, setCategory] = useState<string>("all");
   const [page, setPage] = useState(0);
+  const [manageModal, setManageModal] = useState<{
+    type: "edit" | "delete";
+    programmeId: string;
+  } | null>(null);
+  const removeProgramme = useApp((s) => s.removeProgramme);
+  const updateProgramme = useApp((s) => s.updateProgramme);
   const perPage = 8;
   const scoped = useMemo(() => {
     if (!user) return [];
@@ -162,6 +177,9 @@ export default function ProgrammesPage() {
                     <TableHead>Date</TableHead>
                     <TableHead>Budget</TableHead>
                     <TableHead>Status</TableHead>
+                    {user.role === "super_admin" && (
+                      <TableHead className="text-right">Actions</TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -184,6 +202,34 @@ export default function ProgrammesPage() {
                       <TableCell>
                         <StatusBadge status={p.status} />
                       </TableCell>
+                      {user.role === "super_admin" && (
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setManageModal({ type: "edit", programmeId: p.id });
+                              }}
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setManageModal({ type: "delete", programmeId: p.id });
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -218,6 +264,87 @@ export default function ProgrammesPage() {
           )}
         </div>
       </div>
+
+      <Dialog
+        open={manageModal?.type === "delete"}
+        onOpenChange={(o) => !o && setManageModal(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Programme</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to permanently delete this programme? This cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setManageModal(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (manageModal?.programmeId) {
+                  try {
+                    await removeProgramme(manageModal.programmeId);
+                    toast.success("Programme deleted");
+                  } catch (err) {
+                    toast.error("Failed to delete programme");
+                  } finally {
+                    setManageModal(null);
+                  }
+                }
+              }}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={manageModal?.type === "edit"} onOpenChange={(o) => !o && setManageModal(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Override Status</DialogTitle>
+            <DialogDescription>
+              As a Super Admin, you can manually override the status of this programme.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Select
+              value={programmes.find((p) => p.id === manageModal?.programmeId)?.status}
+              onValueChange={async (val) => {
+                if (manageModal?.programmeId) {
+                  try {
+                    await updateProgramme(manageModal.programmeId, {
+                      status: val as ProgrammeStatus,
+                    });
+                    toast.success("Status updated");
+                    setManageModal(null);
+                  } catch (err) {
+                    toast.error("Failed to update status");
+                  }
+                }
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select new status" />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUSES.filter((s) => s.id !== "all").map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setManageModal(null)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AppShell>
   );
 }

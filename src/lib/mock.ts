@@ -1,7 +1,7 @@
-// Mock data store for VenueHub. Swap for real API/Cloud calls later.
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-export type Role = "wing" | "union" | "teacher";
+export type Role = "wing" | "union" | "teacher" | "super_admin";
 
 export interface User {
   id: string;
@@ -58,21 +58,7 @@ export interface Notification {
 }
 
 // ---- Seed data ----
-export const VENUES: Venue[] = [
-  { id: "v1", name: "Main Auditorium", capacity: 500, location: "Block A, GF", active: true },
-  { id: "v2", name: "Seminar Hall 1", capacity: 120, location: "Block B, 1F", active: true },
-  { id: "v3", name: "Seminar Hall 2", capacity: 80, location: "Block B, 2F", active: true },
-  { id: "v4", name: "Open Air Theatre", capacity: 800, location: "Campus Ground", active: true },
-  {
-    id: "v5",
-    name: "Conference Room",
-    capacity: 40,
-    location: "Block C, 3F",
-    active: true,
-    blocked: true,
-  },
-  { id: "v6", name: "Sports Ground", capacity: 1000, location: "North Campus", active: true },
-];
+export const VENUES: Venue[] = [];
 
 export const CATEGORIES = [
   "Cultural",
@@ -100,380 +86,217 @@ const d = (offset: number) => {
   return x.toISOString().slice(0, 10);
 };
 
-export const PROGRAMMES: Programme[] = [
-  {
-    id: "p1",
-    name: "TechFest 2025",
-    category: "Technical",
-    purpose: "Annual technical festival with coding contests, robotics, and talks.",
-    wing: "Computer Science Wing",
-    wingId: "w1",
-    date: d(3),
-    startTime: "09:00",
-    endTime: "17:00",
-    venueId: "v1",
-    expectedStudents: 350,
-    guest: "Dr. R. Krishnan, IIT Madras",
-    equipment: "Projector, Mic x4, Stage lighting",
-    budget: 85000,
-    status: "teacher_approved",
-    createdAt: d(-10),
-    attachments: [
-      { name: "poster.pdf", size: "1.2 MB" },
-      { name: "permission.pdf", size: "220 KB" },
-    ],
-    comments: [
-      {
-        id: "c1",
-        author: "Anita (Union)",
-        role: "union",
-        text: "Looks great. Budget approved.",
-        at: d(-7),
-      },
-      {
-        id: "c2",
-        author: "Prof. Menon",
-        role: "teacher",
-        text: "Approved. Coordinate with security.",
-        at: d(-5),
-      },
-    ],
-    timeline: [
-      { label: "Submitted by Wing", at: d(-10), done: true },
-      { label: "Union Approved", at: d(-7), done: true },
-      { label: "Teacher Approved", at: d(-5), done: true },
-      { label: "Booked", at: d(-5), done: true },
-    ],
-  },
-  {
-    id: "p2",
-    name: "Inter-College Debate",
-    category: "Competition",
-    purpose: "Debate competition across 12 partnering colleges.",
-    wing: "Literary Club",
-    wingId: "w5",
-    date: d(7),
-    startTime: "10:00",
-    endTime: "16:00",
-    venueId: "v2",
-    expectedStudents: 90,
-    budget: 22000,
-    status: "union_approved",
-    createdAt: d(-4),
-    comments: [
-      {
-        id: "c3",
-        author: "Anita (Union)",
-        role: "union",
-        text: "Forwarded to faculty.",
-        at: d(-2),
-      },
-    ],
-    timeline: [
-      { label: "Submitted by Wing", at: d(-4), done: true },
-      { label: "Union Approved", at: d(-2), done: true },
-      { label: "Teacher Approved", done: false },
-      { label: "Booked", done: false },
-    ],
-  },
-  {
-    id: "p3",
-    name: "Cultural Night",
-    category: "Cultural",
-    purpose: "Music, dance, and drama showcase.",
-    wing: "Cultural Committee",
-    wingId: "w3",
-    date: d(14),
-    startTime: "18:00",
-    endTime: "22:00",
-    venueId: "v4",
-    expectedStudents: 600,
-    budget: 120000,
-    status: "submitted",
-    createdAt: d(-1),
-    comments: [],
-    timeline: [
-      { label: "Submitted by Wing", at: d(-1), done: true },
-      { label: "Union Approved", done: false },
-      { label: "Teacher Approved", done: false },
-      { label: "Booked", done: false },
-    ],
-  },
-  {
-    id: "p4",
-    name: "AI Workshop",
-    category: "Workshop",
-    purpose: "Hands-on introduction to LLMs.",
-    wing: "IEEE Chapter",
-    wingId: "w6",
-    date: d(-5),
-    startTime: "09:00",
-    endTime: "13:00",
-    venueId: "v3",
-    expectedStudents: 60,
-    budget: 15000,
-    status: "completed",
-    createdAt: d(-30),
-    rating: 4.5,
-    ratingRemarks: "Well organised, active participation.",
-    comments: [],
-    timeline: [
-      { label: "Submitted", at: d(-30), done: true },
-      { label: "Union Approved", at: d(-28), done: true },
-      { label: "Teacher Approved", at: d(-25), done: true },
-      { label: "Completed", at: d(-5), done: true },
-    ],
-  },
-  {
-    id: "p5",
-    name: "Robotics Expo",
-    category: "Technical",
-    purpose: "Student robotics project exhibition.",
-    wing: "Electronics Wing",
-    wingId: "w2",
-    date: d(2),
-    startTime: "11:00",
-    endTime: "16:00",
-    venueId: "v2",
-    expectedStudents: 150,
-    budget: 40000,
-    status: "rejected",
-    createdAt: d(-6),
-    comments: [
-      {
-        id: "c4",
-        author: "Anita (Union)",
-        role: "union",
-        text: "Venue conflict; please pick another date.",
-        at: d(-3),
-      },
-    ],
-    timeline: [
-      { label: "Submitted", at: d(-6), done: true },
-      { label: "Rejected by Union", at: d(-3), done: true },
-    ],
-  },
-  {
-    id: "p6",
-    name: "Basketball Tournament",
-    category: "Sports",
-    purpose: "Intra-college basketball championship.",
-    wing: "Sports Committee",
-    wingId: "w4",
-    date: d(10),
-    startTime: "08:00",
-    endTime: "18:00",
-    venueId: "v6",
-    expectedStudents: 200,
-    budget: 30000,
-    status: "teacher_approved",
-    createdAt: d(-8),
-    comments: [],
-    timeline: [
-      { label: "Submitted", at: d(-8), done: true },
-      { label: "Union Approved", at: d(-6), done: true },
-      { label: "Teacher Approved", at: d(-4), done: true },
-      { label: "Booked", at: d(-4), done: true },
-    ],
-  },
-];
+export const PROGRAMMES: Programme[] = [];
 
-export const NOTIFICATIONS: Notification[] = [
-  {
-    id: "n1",
-    title: "Programme Approved",
-    message: "TechFest 2025 was approved by Prof. Menon.",
-    at: d(-5),
-    read: false,
-    type: "success",
-  },
-  {
-    id: "n2",
-    title: "New Submission",
-    message: "Cultural Night is pending review.",
-    at: d(-1),
-    read: false,
-    type: "info",
-  },
-  {
-    id: "n3",
-    title: "Programme Rejected",
-    message: "Robotics Expo was rejected — venue conflict.",
-    at: d(-3),
-    read: true,
-    type: "danger",
-  },
-  {
-    id: "n4",
-    title: "Venue Blocked",
-    message: "Conference Room blocked for maintenance.",
-    at: d(-2),
-    read: true,
-    type: "warning",
-  },
-  {
-    id: "n5",
-    title: "Comment Added",
-    message: "Anita commented on Inter-College Debate.",
-    at: d(-2),
-    read: false,
-    type: "info",
-  },
-];
+export const NOTIFICATIONS: Notification[] = [];
 
 // ---- Zustand store (client-only mutable state with DB persistence) ----
 interface AppState {
   user: User | null;
+  users: User[];
   programmes: Programme[];
   venues: Venue[];
   notifications: Notification[];
-  login: (username: string, role: Role) => void;
+  login: (username: string, password?: string) => Promise<void>;
   logout: () => void;
   fetchInitialData: () => Promise<void>;
   addProgramme: (p: Programme) => void;
   updateProgramme: (id: string, patch: Partial<Programme>) => void;
+  removeProgramme: (id: string) => Promise<void>;
   addVenue: (v: Venue) => void;
   updateVenue: (id: string, patch: Partial<Venue>) => void;
   removeVenue: (id: string) => void;
+  addUser: (u: User) => void;
+  updateUser: (id: string, patch: Partial<User>) => void;
+  removeUser: (id: string) => void;
   markAllNotificationsRead: () => void;
 }
 
-export const useApp = create<AppState>((set, get) => ({
-  user: null,
-  programmes: [],
-  venues: [],
-  notifications: [],
-  login: (username, role) => {
-    const names: Record<Role, string> = {
-      wing: "Rahul Menon",
-      union: "Anita Sharma",
-      teacher: "Prof. K. Menon",
-    };
-    const wings: Record<Role, string | undefined> = {
-      wing: "Computer Science Wing",
-      union: undefined,
-      teacher: undefined,
-    };
-    set({
-      user: {
-        id: "u1",
-        username,
-        name: names[role],
-        role,
-        wing: wings[role],
+export const useApp = create<AppState>()(
+  persist(
+    (set, get) => ({
+      user: null,
+      users: [],
+      programmes: [],
+      venues: [],
+      notifications: [],
+      login: async (username, password) => {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || "Failed to login");
+        }
+
+        const loggedInUser = await res.json();
+        set({ user: loggedInUser });
       },
-    });
-  },
-  logout: () => set({ user: null }),
-  fetchInitialData: async () => {
-    console.log(
-      "fetchInitialData: initiating fetch requests to /api/venues, /api/programmes, /api/notifications...",
-    );
-    try {
-      const [resVenues, resProgrammes, resNotifications] = await Promise.all([
-        fetch("/api/venues").then((r) => {
-          console.log("fetchInitialData: /api/venues response status:", r.status);
-          return r.json();
-        }),
-        fetch("/api/programmes").then((r) => {
-          console.log("fetchInitialData: /api/programmes response status:", r.status);
-          return r.json();
-        }),
-        fetch("/api/notifications").then((r) => {
-          console.log("fetchInitialData: /api/notifications response status:", r.status);
-          return r.json();
-        }),
-      ]);
-      console.log("fetchInitialData: fetch results loaded successfully:", {
-        venuesCount: Array.isArray(resVenues) ? resVenues.length : "not an array",
-        programmesCount: Array.isArray(resProgrammes) ? resProgrammes.length : "not an array",
-        notificationsCount: Array.isArray(resNotifications)
-          ? resNotifications.length
-          : "not an array",
-      });
-      set({
-        venues: Array.isArray(resVenues) ? resVenues : [],
-        programmes: Array.isArray(resProgrammes) ? resProgrammes : [],
-        notifications: Array.isArray(resNotifications) ? resNotifications : [],
-      });
-    } catch (err) {
-      console.error("Failed to fetch initial database data:", err);
-    }
-  },
-  addProgramme: async (p) => {
-    try {
-      const res = await fetch("/api/programmes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(p),
-      });
-      const created = await res.json();
-      set((s) => ({ programmes: [created, ...s.programmes] }));
-    } catch (err) {
-      console.error("Failed to add programme:", err);
-    }
-  },
-  updateProgramme: async (id, patch) => {
-    try {
-      const res = await fetch(`/api/programmes/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(patch),
-      });
-      const updated = await res.json();
-      set((s) => ({
-        programmes: s.programmes.map((p) => (p.id === id ? updated : p)),
-      }));
-    } catch (err) {
-      console.error("Failed to update programme:", err);
-    }
-  },
-  addVenue: async (v) => {
-    try {
-      const res = await fetch("/api/venues", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(v),
-      });
-      const created = await res.json();
-      set((s) => ({ venues: [...s.venues, created] }));
-    } catch (err) {
-      console.error("Failed to add venue:", err);
-    }
-  },
-  updateVenue: async (id, patch) => {
-    try {
-      const res = await fetch(`/api/venues/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(patch),
-      });
-      const updated = await res.json();
-      set((s) => ({
-        venues: s.venues.map((v) => (v.id === id ? updated : v)),
-      }));
-    } catch (err) {
-      console.error("Failed to update venue:", err);
-    }
-  },
-  removeVenue: async (id) => {
-    try {
-      await fetch(`/api/venues/${id}`, { method: "DELETE" });
-      set((s) => ({ venues: s.venues.filter((v) => v.id !== id) }));
-    } catch (err) {
-      console.error("Failed to delete venue:", err);
-    }
-  },
-  markAllNotificationsRead: async () => {
-    try {
-      const res = await fetch("/api/notifications", { method: "PUT" });
-      const updatedList = await res.json();
-      set({ notifications: updatedList });
-    } catch (err) {
-      console.error("Failed to mark notifications read:", err);
-    }
-  },
-}));
+      logout: () => set({ user: null }),
+      fetchInitialData: async () => {
+        console.log(
+          "fetchInitialData: initiating fetch requests to /api/users, /api/venues, /api/programmes, /api/notifications...",
+        );
+        try {
+          const [resUsers, resVenues, resProgrammes, resNotifications] = await Promise.all([
+            fetch("/api/users").then((r) => r.json()),
+            fetch("/api/venues").then((r) => r.json()),
+            fetch("/api/programmes").then((r) => r.json()),
+            fetch("/api/notifications").then((r) => r.json()),
+          ]);
+          console.log("fetchInitialData: fetch results loaded successfully:", {
+            usersCount: Array.isArray(resUsers) ? resUsers.length : "not an array",
+            venuesCount: Array.isArray(resVenues) ? resVenues.length : "not an array",
+            programmesCount: Array.isArray(resProgrammes) ? resProgrammes.length : "not an array",
+            notificationsCount: Array.isArray(resNotifications)
+              ? resNotifications.length
+              : "not an array",
+          });
+          set({
+            users: Array.isArray(resUsers) ? resUsers : [],
+            venues: Array.isArray(resVenues) ? resVenues : [],
+            programmes: Array.isArray(resProgrammes) ? resProgrammes : [],
+            notifications: Array.isArray(resNotifications) ? resNotifications : [],
+          });
+        } catch (err) {
+          console.error("Failed to fetch initial database data:", err);
+        }
+      },
+      addProgramme: async (p) => {
+        try {
+          const res = await fetch("/api/programmes", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(p),
+          });
+          const created = await res.json();
+          set((s) => ({ programmes: [created, ...s.programmes] }));
+        } catch (err) {
+          console.error("Failed to add programme:", err);
+        }
+      },
+      updateProgramme: async (id, patch) => {
+        try {
+          const res = await fetch(`/api/programmes/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(patch),
+          });
+          const updated = await res.json();
+          set((s) => ({
+            programmes: s.programmes.map((p) => (p.id === id ? updated : p)),
+          }));
+        } catch (err) {
+          console.error("Failed to update programme:", err);
+        }
+      },
+      removeProgramme: async (id) => {
+        try {
+          const res = await fetch(`/api/programmes/${id}`, { method: "DELETE" });
+          if (!res.ok) throw new Error("Failed to delete programme");
+          set((s) => ({ programmes: s.programmes.filter((p) => p.id !== id) }));
+        } catch (err) {
+          console.error("Failed to delete programme:", err);
+          throw err;
+        }
+      },
+      addVenue: async (v) => {
+        try {
+          const res = await fetch("/api/venues", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(v),
+          });
+          const created = await res.json();
+          set((s) => ({ venues: [...s.venues, created] }));
+        } catch (err) {
+          console.error("Failed to add venue:", err);
+        }
+      },
+      updateVenue: async (id, patch) => {
+        try {
+          const res = await fetch(`/api/venues/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(patch),
+          });
+          const updated = await res.json();
+          set((s) => ({
+            venues: s.venues.map((v) => (v.id === id ? updated : v)),
+          }));
+        } catch (err) {
+          console.error("Failed to update venue:", err);
+        }
+      },
+      removeVenue: async (id) => {
+        try {
+          await fetch(`/api/venues/${id}`, { method: "DELETE" });
+          set((s) => ({ venues: s.venues.filter((v) => v.id !== id) }));
+        } catch (err) {
+          console.error("Failed to delete venue:", err);
+        }
+      },
+      addUser: async (u) => {
+        try {
+          const res = await fetch("/api/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(u),
+          });
+          if (!res.ok) throw new Error("Failed to add user");
+          const created = await res.json();
+          set((s) => ({ users: [...s.users, created] }));
+        } catch (err) {
+          console.error("Failed to add user:", err);
+          throw err;
+        }
+      },
+      updateUser: async (id, patch) => {
+        try {
+          const res = await fetch(`/api/users/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(patch),
+          });
+          if (!res.ok) throw new Error("Failed to update user");
+          const updated = await res.json();
+          set((s) => ({
+            users: s.users.map((u) => (u.id === id ? updated : u)),
+          }));
+        } catch (err) {
+          console.error("Failed to update user:", err);
+          throw err;
+        }
+      },
+      removeUser: async (id) => {
+        try {
+          const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
+          if (!res.ok) throw new Error("Failed to delete user");
+          set((s) => ({ users: s.users.filter((u) => u.id !== id) }));
+        } catch (err) {
+          console.error("Failed to delete user:", err);
+          throw err;
+        }
+      },
+      markAllNotificationsRead: async () => {
+        try {
+          const res = await fetch("/api/notifications", { method: "PUT" });
+          const updatedList = await res.json();
+          set({ notifications: updatedList });
+        } catch (err) {
+          console.error("Failed to mark notifications read:", err);
+        }
+      },
+    }),
+    {
+      name: "campus-flow-storage",
+      partialize: (state) => ({ user: state.user }),
+    },
+  ),
+);
 
 export function venueName(id: string): string {
   return useApp.getState().venues.find((v) => v.id === id)?.name ?? "Unknown venue";

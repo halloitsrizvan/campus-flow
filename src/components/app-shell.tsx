@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   CheckCircle2,
+  Users,
 } from "lucide-react";
 import { useApp, type Role } from "@/lib/mock";
 import { cn } from "@/lib/utils";
@@ -47,7 +48,8 @@ const NAV: NavItem[] = [
   { to: "/approvals", label: "Approvals", icon: CheckCircle2, roles: ["union", "teacher"] },
   { to: "/calendar", label: "Venue Calendar", icon: CalendarDays },
   { to: "/venues", label: "Venues", icon: Building2, roles: ["union"] },
-  { to: "/reports", label: "Reports", icon: BarChart3, roles: ["union", "teacher"] },
+  { to: "/users", label: "Manage Users", icon: Users, roles: ["super_admin"] },
+  { to: "/reports", label: "Reports", icon: BarChart3, roles: ["union", "teacher", "super_admin"] },
   { to: "/notifications", label: "Notifications", icon: Bell },
   { to: "/settings", label: "Settings", icon: SettingsIcon },
 ];
@@ -75,9 +77,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   const unread = notifications.filter((n) => !n.read).length;
 
   const roleLabel: Record<Role, string> = {
-    wing: "Wing Member",
-    union: "Union",
+    wing: "Wing Admin",
+    union: "Union Admin",
     teacher: "Faculty",
+    super_admin: "Super Admin",
   };
 
   return (

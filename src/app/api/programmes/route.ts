@@ -1,38 +1,11 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Programme from "@/models/Programme";
-import { PROGRAMMES } from "@/lib/mock";
 
 export async function GET() {
   try {
     await connectDB();
-    let list = await Programme.find({});
-    if (list.length === 0) {
-      const seed = PROGRAMMES.map((p) => ({
-        _id: p.id,
-        name: p.name,
-        category: p.category,
-        purpose: p.purpose,
-        wing: p.wing,
-        wingId: p.wingId,
-        date: p.date,
-        startTime: p.startTime,
-        endTime: p.endTime,
-        venueId: p.venueId,
-        expectedStudents: p.expectedStudents,
-        guest: p.guest,
-        equipment: p.equipment,
-        budget: p.budget,
-        status: p.status,
-        attachments: p.attachments,
-        comments: p.comments,
-        timeline: p.timeline,
-        rating: p.rating,
-        ratingRemarks: p.ratingRemarks,
-      }));
-      await Programme.insertMany(seed);
-      list = await Programme.find({});
-    }
+    const list = await Programme.find({});
     return NextResponse.json(list);
   } catch (error) {
     const err = error as Error;
