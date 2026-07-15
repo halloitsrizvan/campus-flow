@@ -65,7 +65,7 @@ function DashboardContent() {
   ).length;
   const approved = scoped.filter((p) => p.status === "teacher_approved").length;
   const rejected = scoped.filter((p) => p.status === "rejected").length;
-  const budget = scoped.reduce((a, p) => a + p.budget, 0);
+  const budget = scoped.reduce((a, p) => a + p.budget.reduce((acc, curr) => acc + curr.amount, 0), 0);
 
   const monthlyData = buildMonthly(scoped);
   const statusData = [

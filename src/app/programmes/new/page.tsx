@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useApp, CATEGORIES, venueName, type Programme } from "@/lib/mock";
+import { useApp, venueName, type Programme } from "@/lib/mock";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -28,6 +28,7 @@ import {
   MapPin,
   Users,
   Wallet,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -37,7 +38,7 @@ const STEPS = [
   { id: 2, label: "Schedule" },
   { id: 3, label: "Venue" },
   { id: 4, label: "Details" },
-  { id: 5, label: "Attachments" },
+  { id: 5, label: "Poster" },
   { id: 6, label: "Review" },
 ];
 
@@ -61,16 +62,18 @@ function RegisterWizard() {
   const [form, setForm] = useState({
     name: "",
     category: "",
+    customCategory: "",
     purpose: "",
     date: "",
     startTime: "10:00",
     endTime: "13:00",
     venueId: "",
-    expectedStudents: 100,
-    guest: "",
-    equipment: "",
-    budget: 10000,
-    files: [] as { name: string; size: string }[],
+    customVenueName: "",
+    audience: "All",
+    guests: [] as { name: string; position: string }[],
+    equipment: [] as string[],
+    budget: [] as { item: string; amount: number }[],
+    poster: null as { name: string; size: string } | null,
   });
   const conflict = useMemo(() => {
     if (!form.venueId || !form.date) return null;
@@ -86,34 +89,39 @@ function RegisterWizard() {
   if (!user) return null;
 
   const canNext = () => {
-    if (step === 1) return form.name && form.category && form.purpose;
+    if (step === 1) return form.name && form.category && (form.category !== "custom" || form.customCategory.trim().length > 0) && form.purpose;
     if (step === 2)
       return form.date && form.startTime && form.endTime && form.startTime < form.endTime;
-    if (step === 3) return form.venueId && !conflict;
-    if (step === 4) return form.expectedStudents > 0 && form.budget >= 0;
+    if (step === 3)
+      return (
+        form.venueId &&
+        (form.venueId !== "custom" || form.customVenueName.trim().length > 0) &&
+        !conflict
+      );
+    if (step === 4) return form.audience && form.budget.every(b => b.item.trim() && b.amount >= 0);
     return true;
   };
 
-  function submit() {
+  const submit = async () => {
     const now = new Date().toISOString();
     const p: Programme = {
       id: `p${Date.now()}`,
       name: form.name,
-      category: form.category,
+      category: form.category === "custom" ? form.customCategory : form.category,
       purpose: form.purpose,
       wing: user!.wing ?? "Unknown Wing",
       wingId: "w1",
       date: form.date,
       startTime: form.startTime,
       endTime: form.endTime,
-      venueId: form.venueId,
-      expectedStudents: Number(form.expectedStudents),
-      guest: form.guest,
+      venueId: form.venueId === "custom" ? form.customVenueName : form.venueId,
+      audience: form.audience,
+      guests: form.guests,
       equipment: form.equipment,
-      budget: Number(form.budget),
+      budget: form.budget,
       status: "submitted",
       createdAt: now,
-      attachments: form.files,
+      poster: form.poster ?? undefined,
       comments: [],
       timeline: [
         { label: "Submitted by Wing", at: now, done: true },
@@ -121,11 +129,17 @@ function RegisterWizard() {
         { label: "Teacher Approval", done: false },
         { label: "Booked", done: false },
       ],
+      committeeApproved: false,
+      teacherApproved: false,
     };
-    addProgramme(p);
-    toast.success("Programme submitted for approval");
-    router.push(`/programmes/${p.id}`);
-  }
+    try {
+      await addProgramme(p);
+      toast.success("Programme submitted for approval");
+      router.push(`/programmes/${p.id}`);
+    } catch (e: any) {
+      toast.error(e.message || "Failed to submit programme");
+    }
+  };
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -176,23 +190,33 @@ function RegisterWizard() {
               />
             </div>
             <div className="grid gap-1.5">
-              <Label>Category</Label>
+              <Label>Behaviour of program</Label>
               <Select
                 value={form.category}
                 onValueChange={(v) => setForm({ ...form, category: v })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder="Select behaviour" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="talk">talk</SelectItem>
+                  <SelectItem value="competition">competition</SelectItem>
+                  <SelectItem value="lecture">lecture</SelectItem>
+                  <SelectItem value="custom">custom</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+            {form.category === "custom" && (
+              <div className="grid gap-1.5">
+                <Label>Custom Behaviour</Label>
+                <Input
+                  value={form.customCategory}
+                  onChange={(e) => setForm({ ...form, customCategory: e.target.value })}
+                  placeholder="Enter custom behaviour"
+                  required
+                />
+              </div>
+            )}
             <div className="grid gap-1.5">
               <Label>Purpose</Label>
               <Textarea
@@ -243,6 +267,10 @@ function RegisterWizard() {
                   <SelectValue placeholder="Choose a venue" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="Musjid">Musjid</SelectItem>
+                  <SelectItem value="Library">Library</SelectItem>
+                  <SelectItem value="Class">Class</SelectItem>
+                  <SelectItem value="Ground">Ground</SelectItem>
                   {venues
                     .filter((v) => v.active && !v.blocked)
                     .map((v) => (
@@ -250,9 +278,22 @@ function RegisterWizard() {
                         {v.name} <span className="text-muted-foreground">— cap {v.capacity}</span>
                       </SelectItem>
                     ))}
+                  <SelectItem value="custom">Custom (Specify below)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
+            {form.venueId === "custom" && (
+              <div className="grid gap-1.5">
+                <Label>Custom Venue Name</Label>
+                <Input
+                  value={form.customVenueName}
+                  onChange={(e) => setForm({ ...form, customVenueName: e.target.value })}
+                  placeholder="e.g. City Hall"
+                  required
+                />
+              </div>
+            )}
 
             <div className="rounded-lg border bg-muted/30 p-4 text-sm">
               <div className="mb-2 flex items-center gap-2 font-medium">
@@ -294,38 +335,146 @@ function RegisterWizard() {
         {step === 4 && (
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-1.5">
-              <Label>Expected Students</Label>
-              <Input
-                type="number"
-                min={1}
-                value={form.expectedStudents}
-                onChange={(e) => setForm({ ...form, expectedStudents: Number(e.target.value) })}
-              />
+              <Label>Audience</Label>
+              <Select value={form.audience} onValueChange={(v) => setForm({ ...form, audience: v })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select audience" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Limited">Limited</SelectItem>
+                  <SelectItem value="All">All</SelectItem>
+                  <SelectItem value="Selected">Selected</SelectItem>
+                  <SelectItem value="Out">Out</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <div className="grid gap-1.5">
+            <div className="grid gap-2 sm:col-span-2">
               <Label>Budget (₹)</Label>
-              <Input
-                type="number"
-                min={0}
-                value={form.budget}
-                onChange={(e) => setForm({ ...form, budget: Number(e.target.value) })}
-              />
+              <div className="space-y-2">
+                {form.budget.map((b, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <Input
+                      placeholder="Item (e.g. Prize)"
+                      value={b.item}
+                      onChange={(e) => {
+                        const newBudget = [...form.budget];
+                        newBudget[i].item = e.target.value;
+                        setForm({ ...form, budget: newBudget });
+                      }}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Amount"
+                      min={0}
+                      value={b.amount || ""}
+                      onChange={(e) => {
+                        const newBudget = [...form.budget];
+                        newBudget[i].amount = Number(e.target.value);
+                        setForm({ ...form, budget: newBudget });
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="shrink-0"
+                      onClick={() => {
+                        setForm({ ...form, budget: form.budget.filter((_, x) => x !== i) });
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setForm({ ...form, budget: [...form.budget, { item: "", amount: 0 }] })}
+                >
+                  Add Expense
+                </Button>
+                {form.budget.length > 0 && (
+                  <div className="text-sm font-medium pt-2 text-muted-foreground">
+                    Total: ₹{form.budget.reduce((acc, curr) => acc + curr.amount, 0).toLocaleString()}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="grid gap-2 sm:col-span-2">
+              <Label>Guests (optional)</Label>
+              <div className="space-y-2">
+                {form.guests.map((g, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <Input
+                      placeholder="Name"
+                      value={g.name}
+                      onChange={(e) => {
+                        const newGuests = [...form.guests];
+                        newGuests[i].name = e.target.value;
+                        setForm({ ...form, guests: newGuests });
+                      }}
+                    />
+                    <Input
+                      placeholder="Position/Category"
+                      value={g.position}
+                      onChange={(e) => {
+                        const newGuests = [...form.guests];
+                        newGuests[i].position = e.target.value;
+                        setForm({ ...form, guests: newGuests });
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="shrink-0"
+                      onClick={() => {
+                        setForm({ ...form, guests: form.guests.filter((_, x) => x !== i) });
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setForm({ ...form, guests: [...form.guests, { name: "", position: "" }] })}
+                >
+                  Add Guest
+                </Button>
+              </div>
             </div>
             <div className="grid gap-1.5 sm:col-span-2">
-              <Label>Chief Guest (optional)</Label>
-              <Input
-                value={form.guest}
-                onChange={(e) => setForm({ ...form, guest: e.target.value })}
-              />
-            </div>
-            <div className="grid gap-1.5 sm:col-span-2">
-              <Label>Equipment Required</Label>
-              <Textarea
-                value={form.equipment}
-                onChange={(e) => setForm({ ...form, equipment: e.target.value })}
-                rows={3}
-                placeholder="Projector, mic, stage lighting…"
-              />
+              <Label>Permissions / Equipment Required</Label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {["Mic", "Stool", "Carpet", "Projector", "Stage Lighting", "Speakers"].map((eq) => {
+                  const selected = form.equipment.includes(eq);
+                  return (
+                    <button
+                      key={eq}
+                      type="button"
+                      onClick={() => {
+                        if (selected) {
+                          setForm({ ...form, equipment: form.equipment.filter((e) => e !== eq) });
+                        } else {
+                          setForm({ ...form, equipment: [...form.equipment, eq] });
+                        }
+                      }}
+                      className={cn(
+                        "rounded-full border px-3 py-1 text-xs font-medium transition-colors cursor-pointer",
+                        selected
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-background text-muted-foreground hover:bg-muted"
+                      )}
+                    >
+                      {eq}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}
@@ -334,41 +483,42 @@ function RegisterWizard() {
           <div className="space-y-4">
             <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 text-center hover:bg-muted/40">
               <Upload className="h-6 w-6 text-muted-foreground" />
-              <div className="mt-2 text-sm font-medium">Click to upload</div>
+              <div className="mt-2 text-sm font-medium">Click to upload Poster</div>
               <div className="text-xs text-muted-foreground">
-                Poster, permission letter, PDFs (mock)
+                Image files only (mock)
               </div>
               <input
                 type="file"
-                multiple
+                accept="image/*"
                 className="hidden"
                 onChange={(e) => {
-                  const files = Array.from(e.target.files ?? []).map((f) => ({
-                    name: f.name,
-                    size: `${(f.size / 1024).toFixed(0)} KB`,
-                  }));
-                  setForm({ ...form, files: [...form.files, ...files] });
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setForm({
+                      ...form,
+                      poster: {
+                        name: file.name,
+                        size: `${(file.size / 1024).toFixed(0)} KB`,
+                      }
+                    });
+                  }
                 }}
               />
             </label>
-            {form.files.length > 0 && (
+            {form.poster && (
               <ul className="divide-y rounded-lg border">
-                {form.files.map((f, i) => (
-                  <li key={i} className="flex items-center gap-3 p-3 text-sm">
-                    <Paperclip className="h-4 w-4 text-muted-foreground" />
-                    <span className="flex-1 truncate">{f.name}</span>
-                    <span className="text-xs text-muted-foreground">{f.size}</span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setForm({ ...form, files: form.files.filter((_, x) => x !== i) })
-                      }
-                      className="text-xs font-medium text-destructive hover:underline cursor-pointer"
-                    >
-                      Remove
-                    </button>
-                  </li>
-                ))}
+                <li className="flex items-center gap-3 p-3 text-sm">
+                  <Paperclip className="h-4 w-4 text-muted-foreground" />
+                  <span className="flex-1 truncate">{form.poster.name}</span>
+                  <span className="text-xs text-muted-foreground">{form.poster.size}</span>
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, poster: null })}
+                    className="text-xs font-medium text-destructive hover:underline cursor-pointer"
+                  >
+                    Remove
+                  </button>
+                </li>
               </ul>
             )}
           </div>
@@ -386,7 +536,7 @@ function RegisterWizard() {
               <ReviewRow
                 icon={<Info className="h-4 w-4" />}
                 label="Programme"
-                value={`${form.name} · ${form.category}`}
+                value={`${form.name} · ${form.category === "custom" ? form.customCategory : form.category}`}
               />
               <ReviewRow
                 icon={<CalendarDays className="h-4 w-4" />}
@@ -400,18 +550,18 @@ function RegisterWizard() {
               />
               <ReviewRow
                 icon={<Users className="h-4 w-4" />}
-                label="Students"
-                value={String(form.expectedStudents)}
+                label="Audience"
+                value={form.audience}
               />
               <ReviewRow
                 icon={<Wallet className="h-4 w-4" />}
                 label="Budget"
-                value={`₹${Number(form.budget).toLocaleString()}`}
+                value={`₹${form.budget.reduce((acc, curr) => acc + curr.amount, 0).toLocaleString()} (${form.budget.length} items)`}
               />
               <ReviewRow
                 icon={<Paperclip className="h-4 w-4" />}
-                label="Attachments"
-                value={`${form.files.length} file(s)`}
+                label="Poster"
+                value={form.poster ? form.poster.name : "None"}
               />
             </div>
             <div className="rounded-lg border bg-muted/30 p-3 text-sm">

@@ -29,16 +29,18 @@ export async function POST(req: Request) {
       startTime: data.startTime,
       endTime: data.endTime,
       venueId: data.venueId,
-      expectedStudents: Number(data.expectedStudents),
-      guest: data.guest,
+      audience: data.audience,
+      guests: data.guests,
       equipment: data.equipment,
-      budget: Number(data.budget),
+      budget: data.budget,
       status: data.status || "submitted",
-      attachments: data.attachments || [],
+      poster: data.poster,
       comments: data.comments || [],
       timeline: data.timeline || [],
       rating: data.rating,
       ratingRemarks: data.ratingRemarks,
+      committeeApproved: data.committeeApproved,
+      teacherApproved: data.teacherApproved,
     });
     return NextResponse.json(item);
   } catch (error) {

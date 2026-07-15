@@ -14,7 +14,7 @@ export interface ITimelineItem {
   done: boolean;
 }
 
-export interface IAttachment {
+export interface IPoster {
   name: string;
   size: string;
 }
@@ -29,16 +29,18 @@ export interface IProgramme extends Document {
   startTime: string;
   endTime: string;
   venueId: string;
-  expectedStudents: number;
-  guest?: string;
-  equipment?: string;
-  budget: number;
+  audience: string;
+  guests?: { name: string; position: string }[];
+  equipment?: string[];
+  budget: { item: string; amount: number }[];
   status: string;
-  attachments?: IAttachment[];
+  poster?: IPoster;
   comments: IComment[];
   timeline: ITimelineItem[];
   rating?: number;
   ratingRemarks?: string;
+  committeeApproved?: boolean;
+  teacherApproved?: boolean;
 }
 
 const CommentSchema = new Schema(
@@ -61,10 +63,26 @@ const TimelineSchema = new Schema(
   { _id: false },
 );
 
-const AttachmentSchema = new Schema(
+const PosterSchema = new Schema(
   {
     name: { type: String, required: true },
     size: { type: String, required: true },
+  },
+  { _id: false },
+);
+
+const GuestSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    position: { type: String, required: true },
+  },
+  { _id: false },
+);
+
+const BudgetItemSchema = new Schema(
+  {
+    item: { type: String, required: true },
+    amount: { type: Number, required: true },
   },
   { _id: false },
 );
@@ -81,16 +99,18 @@ const ProgrammeSchema: Schema = new Schema(
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
     venueId: { type: String, required: true },
-    expectedStudents: { type: Number, required: true },
-    guest: { type: String },
-    equipment: { type: String },
-    budget: { type: Number, required: true },
+    audience: { type: String, required: true, enum: ["Limited", "All", "Selected", "Out"] },
+    guests: [GuestSchema],
+    equipment: [{ type: String }],
+    budget: [BudgetItemSchema],
     status: { type: String, required: true, default: "submitted" },
-    attachments: [AttachmentSchema],
+    poster: PosterSchema,
     comments: [CommentSchema],
     timeline: [TimelineSchema],
     rating: { type: Number },
     ratingRemarks: { type: String },
+    committeeApproved: { type: Boolean, default: false },
+    teacherApproved: { type: Boolean, default: false },
   },
   {
     timestamps: true,
@@ -109,5 +129,8 @@ const ProgrammeSchema: Schema = new Schema(
   },
 );
 
-export default mongoose.models.Programme ||
-  mongoose.model<IProgramme>("Programme", ProgrammeSchema);
+if (mongoose.models.Programme) {
+  delete mongoose.models.Programme;
+}
+
+export default mongoose.model<IProgramme>("Programme", ProgrammeSchema);

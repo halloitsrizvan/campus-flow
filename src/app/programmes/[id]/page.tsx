@@ -142,50 +142,68 @@ export default function ProgrammeDetailPage() {
                 />
                 <InfoRow
                   icon={<Users className="h-4 w-4" />}
-                  label="Expected Students"
-                  value={String(programme.expectedStudents)}
+                  label="Audience"
+                  value={programme.audience}
                 />
-                <InfoRow
-                  icon={<Wallet className="h-4 w-4" />}
-                  label="Budget"
-                  value={`₹${programme.budget.toLocaleString()}`}
-                />
-                {programme.guest && (
+                <div className="flex items-start gap-3 rounded-lg border bg-background p-3 sm:col-span-2">
+                  <div className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-primary/10 text-primary">
+                    <Wallet className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 w-full">
+                    <div className="text-xs uppercase tracking-wide text-muted-foreground">Budget Breakdown</div>
+                    {programme.budget && programme.budget.length > 0 ? (
+                      <ul className="mt-2 space-y-1">
+                        {programme.budget.map((b, i) => (
+                          <li key={i} className="flex justify-between text-sm">
+                            <span>{b.item}</span>
+                            <span className="font-medium">₹{b.amount.toLocaleString()}</span>
+                          </li>
+                        ))}
+                        <li className="flex justify-between text-sm font-semibold pt-2 border-t mt-2">
+                          <span>Total</span>
+                          <span>₹{programme.budget.reduce((acc, curr) => acc + curr.amount, 0).toLocaleString()}</span>
+                        </li>
+                      </ul>
+                    ) : (
+                      <div className="text-sm font-medium mt-1">₹0</div>
+                    )}
+                  </div>
+                </div>
+                {programme.guests && programme.guests.length > 0 && (
                   <InfoRow
                     icon={<Users className="h-4 w-4" />}
-                    label="Chief Guest"
-                    value={programme.guest}
+                    label="Guests"
+                    value={programme.guests.map((g) => `${g.name} (${g.position})`).join(", ")}
                   />
                 )}
-                {programme.equipment && (
+                {programme.equipment && programme.equipment.length > 0 && (
                   <InfoRow
                     icon={<Paperclip className="h-4 w-4" />}
-                    label="Equipment"
-                    value={programme.equipment}
+                    label="Permissions / Equipment"
+                    value={programme.equipment.join(", ")}
                   />
                 )}
               </div>
             </div>
 
-            {programme.attachments && programme.attachments.length > 0 && (
+            {programme.poster && (
               <div className="rounded-xl border bg-card p-6 shadow-sm">
-                <h3 className="text-sm font-semibold">Attachments</h3>
+                <h3 className="text-sm font-semibold">Poster</h3>
                 <ul className="mt-3 divide-y rounded-lg border">
-                  {programme.attachments.map((a, i) => (
-                    <li key={i} className="flex items-center gap-3 p-3 text-sm">
-                      <Paperclip className="h-4 w-4 text-muted-foreground" />
-                      <span className="flex-1 truncate">{a.name}</span>
-                      <span className="text-xs text-muted-foreground">{a.size}</span>
-                    </li>
-                  ))}
+                  <li className="flex items-center gap-3 p-3 text-sm">
+                    <Paperclip className="h-4 w-4 text-muted-foreground" />
+                    <span className="flex-1 truncate">{programme.poster.name}</span>
+                    <span className="text-xs text-muted-foreground">{programme.poster.size}</span>
+                  </li>
                 </ul>
               </div>
             )}
 
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="text-sm font-semibold flex items-center gap-2">
-                <MessageSquare className="h-4 w-4" /> Comments ({programme.comments.length})
-              </h3>
+            {(programme.status === "booked" || programme.status === "completed") && (
+              <div className="rounded-xl border bg-card p-6 shadow-sm">
+                <h3 className="text-sm font-semibold flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4" /> Comments ({programme.comments.length})
+                </h3>
               <div className="mt-4 space-y-4">
                 {programme.comments.length === 0 && (
                   <p className="text-sm text-muted-foreground">No comments yet.</p>
@@ -225,6 +243,7 @@ export default function ProgrammeDetailPage() {
                 </div>
               </div>
             </div>
+            )}
 
             {user.role === "union" && programme.status === "completed" && !programme.rating && (
               <div className="rounded-xl border bg-card p-6 shadow-sm">

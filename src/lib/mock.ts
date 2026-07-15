@@ -26,17 +26,19 @@ export interface Programme {
   startTime: string;
   endTime: string;
   venueId: string;
-  expectedStudents: number;
-  guest?: string;
-  equipment?: string;
-  budget: number;
+  audience: string;
+  guests?: { name: string; position: string }[];
+  equipment?: string[];
+  budget: { item: string; amount: number }[];
   status: ProgrammeStatus;
   createdAt: string;
-  attachments?: { name: string; size: string }[];
+  poster?: { name: string; size: string };
   comments: { id: string; author: string; role: Role; text: string; at: string }[];
   timeline: { label: string; at?: string; done: boolean }[];
   rating?: number;
   ratingRemarks?: string;
+  committeeApproved?: boolean;
+  teacherApproved?: boolean;
 }
 
 export interface Venue {
@@ -166,17 +168,16 @@ export const useApp = create<AppState>()(
         }
       },
       addProgramme: async (p) => {
-        try {
-          const res = await fetch("/api/programmes", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(p),
-          });
-          const created = await res.json();
-          set((s) => ({ programmes: [created, ...s.programmes] }));
-        } catch (err) {
-          console.error("Failed to add programme:", err);
+        const res = await fetch("/api/programmes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(p),
+        });
+        const created = await res.json();
+        if (!res.ok) {
+          throw new Error(created.error || "Failed to add programme");
         }
+        set((s) => ({ programmes: [created, ...s.programmes] }));
       },
       updateProgramme: async (id, patch) => {
         try {
@@ -299,7 +300,8 @@ export const useApp = create<AppState>()(
 );
 
 export function venueName(id: string): string {
-  return useApp.getState().venues.find((v) => v.id === id)?.name ?? "Unknown venue";
+  const v = useApp.getState().venues.find((v) => v.id === id);
+  return v?.name ?? (id || "Unknown venue");
 }
 
 export function statusMeta(s: ProgrammeStatus) {

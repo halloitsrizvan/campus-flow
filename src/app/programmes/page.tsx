@@ -198,7 +198,7 @@ export default function ProgrammesPage() {
                       <TableCell className="text-sm">
                         {format(new Date(p.date), "MMM d, yyyy")}
                       </TableCell>
-                      <TableCell className="text-sm">₹{p.budget.toLocaleString()}</TableCell>
+                      <TableCell className="text-sm">₹{p.budget.reduce((acc, curr) => acc + curr.amount, 0).toLocaleString()}</TableCell>
                       <TableCell>
                         <StatusBadge status={p.status} />
                       </TableCell>
