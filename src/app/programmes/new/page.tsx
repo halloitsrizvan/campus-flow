@@ -90,7 +90,13 @@ function RegisterWizard() {
   if (!user) return null;
 
   const canNext = () => {
-    if (step === 1) return form.name && form.category && (form.category !== "custom" || form.customCategory.trim().length > 0) && form.purpose;
+    if (step === 1)
+      return (
+        form.name &&
+        form.category &&
+        (form.category !== "custom" || form.customCategory.trim().length > 0) &&
+        form.purpose
+      );
     if (step === 2)
       return form.date && form.startTime && form.endTime && form.startTime < form.endTime;
     if (step === 3)
@@ -99,7 +105,8 @@ function RegisterWizard() {
         (form.venueId !== "custom" || form.customVenueName.trim().length > 0) &&
         !conflict
       );
-    if (step === 4) return form.audience && form.budget.every(b => b.item.trim() && b.amount >= 0);
+    if (step === 4)
+      return form.audience && form.budget.every((b) => b.item.trim() && b.amount >= 0);
     return true;
   };
 
@@ -137,7 +144,8 @@ function RegisterWizard() {
       await addProgramme(p);
       toast.success("Programme submitted for approval");
       router.push(`/programmes/${p.id}`);
-    } catch (e: any) {
+    } catch (error) {
+      const e = error as Error;
       toast.error(e.message || "Failed to submit programme");
     }
   };
@@ -337,7 +345,10 @@ function RegisterWizard() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-1.5">
               <Label>Audience</Label>
-              <Select value={form.audience} onValueChange={(v) => setForm({ ...form, audience: v })}>
+              <Select
+                value={form.audience}
+                onValueChange={(v) => setForm({ ...form, audience: v })}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select audience" />
                 </SelectTrigger>
@@ -391,13 +402,16 @@ function RegisterWizard() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => setForm({ ...form, budget: [...form.budget, { item: "", amount: 0 }] })}
+                  onClick={() =>
+                    setForm({ ...form, budget: [...form.budget, { item: "", amount: 0 }] })
+                  }
                 >
                   Add Expense
                 </Button>
                 {form.budget.length > 0 && (
                   <div className="text-sm font-medium pt-2 text-muted-foreground">
-                    Total: ₹{form.budget.reduce((acc, curr) => acc + curr.amount, 0).toLocaleString()}
+                    Total: ₹
+                    {form.budget.reduce((acc, curr) => acc + curr.amount, 0).toLocaleString()}
                   </div>
                 )}
               </div>
@@ -442,7 +456,9 @@ function RegisterWizard() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => setForm({ ...form, guests: [...form.guests, { name: "", position: "" }] })}
+                  onClick={() =>
+                    setForm({ ...form, guests: [...form.guests, { name: "", position: "" }] })
+                  }
                 >
                   Add Guest
                 </Button>
@@ -468,7 +484,7 @@ function RegisterWizard() {
                         "rounded-full border px-3 py-1 text-xs font-medium transition-colors cursor-pointer",
                         selected
                           ? "bg-primary text-primary-foreground border-primary"
-                          : "bg-background text-muted-foreground hover:bg-muted"
+                          : "bg-background text-muted-foreground hover:bg-muted",
                       )}
                     >
                       {eq}
@@ -491,9 +507,7 @@ function RegisterWizard() {
               <div className="mt-2 text-sm font-medium">
                 {isUploading ? "Uploading..." : "Click to upload Poster"}
               </div>
-              <div className="text-xs text-muted-foreground">
-                Image files only
-              </div>
+              <div className="text-xs text-muted-foreground">Image files only</div>
               <input
                 type="file"
                 accept="image/*"
@@ -507,16 +521,19 @@ function RegisterWizard() {
                       const formData = new FormData();
                       formData.append("file", file);
                       formData.append("upload_preset", "college_db");
-                      
-                      const res = await fetch("https://api.cloudinary.com/v1_1/dqgspgrul/image/upload", {
-                        method: "POST",
-                        body: formData,
-                      });
-                      
+
+                      const res = await fetch(
+                        "https://api.cloudinary.com/v1_1/dqgspgrul/image/upload",
+                        {
+                          method: "POST",
+                          body: formData,
+                        },
+                      );
+
                       if (!res.ok) {
                         throw new Error("Failed to upload image");
                       }
-                      
+
                       const data = await res.json();
                       setForm({
                         ...form,
@@ -524,7 +541,7 @@ function RegisterWizard() {
                           name: file.name,
                           size: `${(file.size / 1024).toFixed(0)} KB`,
                           url: data.secure_url,
-                        }
+                        },
                       });
                       toast.success("Poster uploaded successfully");
                     } catch (error) {

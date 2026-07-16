@@ -175,7 +175,9 @@ export default function CalendarPage() {
                   </Row>
                   <Row label="Venue">{venueName(programme.venueId)}</Row>
                   <Row label="Audience">{programme.audience}</Row>
-                  <Row label="Budget">₹{programme.budget.reduce((acc, curr) => acc + curr.amount, 0).toLocaleString()}</Row>
+                  <Row label="Budget">
+                    ₹{programme.budget.reduce((acc, curr) => acc + curr.amount, 0).toLocaleString()}
+                  </Row>
                   <Row label="Status">
                     <StatusBadge status={programme.status} />
                   </Row>

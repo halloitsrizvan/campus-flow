@@ -150,7 +150,9 @@ export default function ProgrammeDetailPage() {
                     <Wallet className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 w-full">
-                    <div className="text-xs uppercase tracking-wide text-muted-foreground">Budget Breakdown</div>
+                    <div className="text-xs uppercase tracking-wide text-muted-foreground">
+                      Budget Breakdown
+                    </div>
                     {programme.budget && programme.budget.length > 0 ? (
                       <ul className="mt-2 space-y-1">
                         {programme.budget.map((b, i) => (
@@ -161,7 +163,12 @@ export default function ProgrammeDetailPage() {
                         ))}
                         <li className="flex justify-between text-sm font-semibold pt-2 border-t mt-2">
                           <span>Total</span>
-                          <span>₹{programme.budget.reduce((acc, curr) => acc + curr.amount, 0).toLocaleString()}</span>
+                          <span>
+                            ₹
+                            {programme.budget
+                              .reduce((acc, curr) => acc + curr.amount, 0)
+                              .toLocaleString()}
+                          </span>
                         </li>
                       </ul>
                     ) : (
@@ -203,7 +210,12 @@ export default function ProgrammeDetailPage() {
                     <Paperclip className="h-4 w-4 text-muted-foreground" />
                     <span className="flex-1 truncate">
                       {programme.poster.url ? (
-                        <a href={programme.poster.url} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                        <a
+                          href={programme.poster.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary hover:underline"
+                        >
                           {programme.poster.name}
                         </a>
                       ) : (
@@ -221,45 +233,45 @@ export default function ProgrammeDetailPage() {
                 <h3 className="text-sm font-semibold flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" /> Comments ({programme.comments.length})
                 </h3>
-              <div className="mt-4 space-y-4">
-                {programme.comments.length === 0 && (
-                  <p className="text-sm text-muted-foreground">No comments yet.</p>
-                )}
-                {programme.comments.map((c) => (
-                  <div key={c.id} className="flex gap-3">
-                    <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary text-xs font-semibold">
-                      {c.author
-                        .split(" ")
-                        .map((x) => x[0])
-                        .join("")
-                        .slice(0, 2)}
-                    </div>
-                    <div className="flex-1 rounded-lg border bg-background p-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="text-sm font-medium">{c.author}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {format(new Date(c.at), "MMM d, HH:mm")}
-                        </div>
+                <div className="mt-4 space-y-4">
+                  {programme.comments.length === 0 && (
+                    <p className="text-sm text-muted-foreground">No comments yet.</p>
+                  )}
+                  {programme.comments.map((c) => (
+                    <div key={c.id} className="flex gap-3">
+                      <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary text-xs font-semibold">
+                        {c.author
+                          .split(" ")
+                          .map((x) => x[0])
+                          .join("")
+                          .slice(0, 2)}
                       </div>
-                      <p className="mt-1 text-sm">{c.text}</p>
+                      <div className="flex-1 rounded-lg border bg-background p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="text-sm font-medium">{c.author}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {format(new Date(c.at), "MMM d, HH:mm")}
+                          </div>
+                        </div>
+                        <p className="mt-1 text-sm">{c.text}</p>
+                      </div>
                     </div>
+                  ))}
+                </div>
+                <div className="mt-4 space-y-2">
+                  <Textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Add a comment…"
+                    rows={3}
+                  />
+                  <div className="flex justify-end">
+                    <Button size="sm" onClick={addComment}>
+                      Add comment
+                    </Button>
                   </div>
-                ))}
-              </div>
-              <div className="mt-4 space-y-2">
-                <Textarea
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Add a comment…"
-                  rows={3}
-                />
-                <div className="flex justify-end">
-                  <Button size="sm" onClick={addComment}>
-                    Add comment
-                  </Button>
                 </div>
               </div>
-            </div>
             )}
 
             {user.role === "union" && programme.status === "completed" && !programme.rating && (

@@ -13,7 +13,13 @@ export interface User {
 }
 
 export type ProgrammeStatus =
-  "draft" | "submitted" | "union_approved" | "teacher_approved" | "rejected" | "completed";
+  | "draft"
+  | "submitted"
+  | "union_approved"
+  | "teacher_approved"
+  | "booked"
+  | "rejected"
+  | "completed";
 
 export interface Programme {
   id: string;

@@ -37,7 +37,11 @@ export default function ReportsPage() {
     .map(([name, value]) => ({ name, value }));
 
   const budgetByCat: Record<string, number> = {};
-  programmes.forEach((p) => (budgetByCat[p.category] = (budgetByCat[p.category] ?? 0) + p.budget.reduce((a, c) => a + c.amount, 0)));
+  programmes.forEach(
+    (p) =>
+      (budgetByCat[p.category] =
+        (budgetByCat[p.category] ?? 0) + p.budget.reduce((a, c) => a + c.amount, 0)),
+  );
   const budgetData = Object.entries(budgetByCat).map(([name, budget]) => ({ name, budget }));
 
   const approvalStats = [
