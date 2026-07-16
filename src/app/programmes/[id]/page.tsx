@@ -119,7 +119,21 @@ export default function ProgrammeDetailPage() {
         <PageHeader
           title={programme.name}
           description={`${programme.wing} · ${programme.category}`}
-          action={<StatusBadge status={programme.status} />}
+          action={
+            <div className="flex items-center gap-3">
+              <StatusBadge status={programme.status} />
+              {(user.role === "wing" || user.role === "super_admin") &&
+                (programme.status === "submitted" || programme.status === "draft") && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push(`/programmes/${programme.id}/edit`)}
+                  >
+                    Edit
+                  </Button>
+                )}
+            </div>
+          }
         />
 
         <div className="grid gap-4 lg:grid-cols-3">
