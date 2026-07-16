@@ -52,13 +52,12 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
   const [step, setStep] = useState(1);
   const [isUploading, setIsUploading] = useState(false);
 
-  const isCustomCategory = initialData ? !["talk", "competition", "lecture"].includes(initialData.category) : false;
   const isCustomVenue = initialData ? !venues.some(v => v.id === initialData.venueId) && !["Musjid", "Library", "Class", "Ground"].includes(initialData.venueId) : false;
 
   const [form, setForm] = useState({
     name: initialData?.name ?? "",
-    category: initialData ? (isCustomCategory ? "custom" : initialData.category) : "",
-    customCategory: initialData && isCustomCategory ? initialData.category : "",
+    category: initialData?.category ?? ([] as string[]),
+    customCategory: "", // Text input buffer
     purpose: initialData?.purpose ?? "",
     date: initialData?.date ?? "",
     startTime: initialData?.startTime ?? "10:00",
@@ -68,6 +67,7 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
     audience: initialData?.audience ?? "All",
     guests: initialData?.guests ?? ([] as { name: string; position: string }[]),
     equipment: initialData?.equipment ?? ([] as string[]),
+    customEquipment: "", // Text input buffer
     budget: initialData?.budget ?? ([] as { item: string; amount: number }[]),
     poster: initialData?.poster ?? (null as { name: string; size: string; url?: string } | null),
   });
@@ -88,12 +88,7 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
 
   const canNext = () => {
     if (step === 1)
-      return (
-        form.name &&
-        form.category &&
-        (form.category !== "custom" || form.customCategory.trim().length > 0) &&
-        form.purpose
-      );
+      return !!form.name;
     if (step === 2)
       return form.date && form.startTime && form.endTime && form.startTime < form.endTime;
     if (step === 3)
@@ -103,7 +98,7 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
         !conflict
       );
     if (step === 4)
-      return form.audience && form.budget.every((b) => b.item.trim() && b.amount >= 0);
+      return form.budget.every((b) => b.item.trim() && b.amount >= 0);
     return true;
   };
 
@@ -112,7 +107,7 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
     const p: Programme = {
       id: initialData?.id ?? `p${Date.now()}`,
       name: form.name,
-      category: form.category === "custom" ? form.customCategory : form.category,
+      category: form.category,
       purpose: form.purpose,
       wing: initialData?.wing ?? (user!.wing ?? "Unknown Wing"),
       wingId: initialData?.wingId ?? "w1",
@@ -201,35 +196,85 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
               />
             </div>
             <div className="grid gap-1.5">
-              <Label>Behaviour of program</Label>
-              <Select
-                value={form.category}
-                onValueChange={(v) => setForm({ ...form, category: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select behaviour" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="talk">talk</SelectItem>
-                  <SelectItem value="competition">competition</SelectItem>
-                  <SelectItem value="lecture">lecture</SelectItem>
-                  <SelectItem value="custom">custom</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label>Behaviour of program (optional)</Label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {["talk", "competition", "lecture"].map((cat) => {
+                  const selected = form.category.includes(cat);
+                  return (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => {
+                        if (selected) {
+                          setForm({ ...form, category: form.category.filter((c) => c !== cat) });
+                        } else {
+                          setForm({ ...form, category: [...form.category, cat] });
+                        }
+                      }}
+                      className={cn(
+                        "rounded-full border px-3 py-1 text-xs font-medium transition-colors cursor-pointer",
+                        selected
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-background text-muted-foreground hover:bg-muted",
+                      )}
+                    >
+                      {cat}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-            {form.category === "custom" && (
-              <div className="grid gap-1.5">
-                <Label>Custom Behaviour</Label>
+            
+            <div className="grid gap-1.5 mt-2">
+              <Label>Custom Behaviour</Label>
+              <div className="flex gap-2">
                 <Input
                   value={form.customCategory}
                   onChange={(e) => setForm({ ...form, customCategory: e.target.value })}
-                  placeholder="Enter custom behaviour"
-                  required
+                  placeholder="Type custom behaviour and press Add"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      if (form.customCategory.trim() && !form.category.includes(form.customCategory.trim())) {
+                        setForm({
+                          ...form,
+                          category: [...form.category, form.customCategory.trim()],
+                          customCategory: ""
+                        });
+                      }
+                    }
+                  }}
                 />
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => {
+                    if (form.customCategory.trim() && !form.category.includes(form.customCategory.trim())) {
+                      setForm({
+                        ...form,
+                        category: [...form.category, form.customCategory.trim()],
+                        customCategory: ""
+                      });
+                    }
+                  }}
+                >
+                  Add
+                </Button>
               </div>
-            )}
+              {form.category.filter(c => !["talk", "competition", "lecture"].includes(c)).length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {form.category.filter(c => !["talk", "competition", "lecture"].includes(c)).map(cat => (
+                    <div key={cat} className="flex items-center gap-1 rounded-full border bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
+                      {cat}
+                      <X className="h-3 w-3 cursor-pointer" onClick={() => setForm({ ...form, category: form.category.filter(c => c !== cat) })} />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="grid gap-1.5">
-              <Label>Purpose</Label>
+              <Label>Purpose (optional)</Label>
               <Textarea
                 value={form.purpose}
                 onChange={(e) => setForm({ ...form, purpose: e.target.value })}
@@ -494,6 +539,51 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
                   );
                 })}
               </div>
+
+              <div className="flex gap-2 mt-2">
+                <Input
+                  value={form.customEquipment}
+                  onChange={(e) => setForm({ ...form, customEquipment: e.target.value })}
+                  placeholder="Type custom equipment and press Add"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      if (form.customEquipment.trim() && !form.equipment.includes(form.customEquipment.trim())) {
+                        setForm({
+                          ...form,
+                          equipment: [...form.equipment, form.customEquipment.trim()],
+                          customEquipment: ""
+                        });
+                      }
+                    }
+                  }}
+                />
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => {
+                    if (form.customEquipment.trim() && !form.equipment.includes(form.customEquipment.trim())) {
+                      setForm({
+                        ...form,
+                        equipment: [...form.equipment, form.customEquipment.trim()],
+                        customEquipment: ""
+                      });
+                    }
+                  }}
+                >
+                  Add
+                </Button>
+              </div>
+              {form.equipment.filter(e => !["Mic", "Stool", "Carpet", "Projector", "Stage Lighting", "Speakers"].includes(e)).length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {form.equipment.filter(e => !["Mic", "Stool", "Carpet", "Projector", "Stage Lighting", "Speakers"].includes(e)).map(eq => (
+                    <div key={eq} className="flex items-center gap-1 rounded-full border bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
+                      {eq}
+                      <X className="h-3 w-3 cursor-pointer" onClick={() => setForm({ ...form, equipment: form.equipment.filter(c => c !== eq) })} />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -587,7 +677,7 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
               <ReviewRow
                 icon={<Info className="h-4 w-4" />}
                 label="Programme"
-                value={`${form.name} · ${form.category === "custom" ? form.customCategory : form.category}`}
+                value={`${form.name} · ${form.category.join(", ")}`}
               />
               <ReviewRow
                 icon={<CalendarDays className="h-4 w-4" />}

@@ -22,7 +22,7 @@ export interface IPoster {
 
 export interface IProgramme extends Document {
   name: string;
-  category: string;
+  category: string[];
   purpose: string;
   wing: string;
   wingId: string;
@@ -93,15 +93,15 @@ const ProgrammeSchema: Schema = new Schema(
   {
     _id: { type: String },
     name: { type: String, required: true },
-    category: { type: String, required: true },
-    purpose: { type: String, required: true },
+    category: { type: [String], default: [] },
+    purpose: { type: String, default: "" },
     wing: { type: String, required: true },
     wingId: { type: String, required: true },
     date: { type: String, required: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
     venueId: { type: String, required: true },
-    audience: { type: String, required: true, enum: ["Limited", "All", "Selected", "Out"] },
+    audience: { type: String, enum: ["Limited", "All", "Selected", "Out"], default: "All" },
     guests: [GuestSchema],
     equipment: [{ type: String }],
     budget: [BudgetItemSchema],

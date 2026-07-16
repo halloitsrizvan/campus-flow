@@ -9,6 +9,7 @@ export interface User {
   username: string;
   role: Role;
   wing?: string;
+  union?: string;
   avatar?: string;
 }
 
@@ -24,7 +25,7 @@ export type ProgrammeStatus =
 export interface Programme {
   id: string;
   name: string;
-  category: string;
+  category: string[];
   purpose: string;
   wing: string;
   wingId: string;
@@ -329,4 +330,33 @@ export function statusMeta(s: ProgrammeStatus) {
     default:
       return { label: "Unknown", cls: "bg-muted text-muted-foreground" };
   }
+}
+
+export function getScopedProgrammes(programmes: Programme[], user: User | null, users: User[]): Programme[] {
+  if (!user) return [];
+  
+  if (user.role === "wing") {
+    return programmes.filter((p) => p.wing === user.wing || p.wingId === user.id);
+  }
+  
+  if (user.role === "union") {
+    const unionWings = users.filter((u) => u.role === "wing" && u.union === user.union).map((u) => u.id);
+    return programmes.filter((p) => unionWings.includes(p.wingId));
+  }
+  
+  if (user.role === "teacher") {
+    // If teacher has a union assigned, only show programmes from wings in that union
+    let teacherWings: string[] | null = null;
+    if (user.union) {
+      teacherWings = users.filter((u) => u.role === "wing" && u.union === user.union).map((u) => u.id);
+    }
+    
+    return programmes.filter((p) => {
+      if (teacherWings && !teacherWings.includes(p.wingId)) return false;
+      // Only show after union approval
+      return p.timeline.some((t) => t.label.toLowerCase().includes("union") && t.done);
+    });
+  }
+  
+  return programmes;
 }

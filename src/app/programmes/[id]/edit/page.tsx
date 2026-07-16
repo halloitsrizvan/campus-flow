@@ -28,7 +28,7 @@ export default function EditProgrammePage({ params }: { params: Promise<{ id: st
   // Check if editable
   const isEditable = 
     user && 
-    (user.role === "wing" || user.role === "super_admin") && 
+    ["wing", "super_admin", "union", "teacher"].includes(user.role) && 
     (programme.status === "submitted" || programme.status === "draft");
 
   if (!isEditable) {

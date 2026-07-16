@@ -78,7 +78,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const roleLabel: Record<Role, string> = {
     wing: "Wing Admin",
-    union: "Union Admin",
+    union: user.union ? `${user.union} Union Admin` : "Union Admin",
     teacher: "Faculty",
     super_admin: "Super Admin",
   };

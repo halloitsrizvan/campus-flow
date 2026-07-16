@@ -118,11 +118,11 @@ export default function ProgrammeDetailPage() {
 
         <PageHeader
           title={programme.name}
-          description={`${programme.wing} · ${programme.category}`}
+          description={`${programme.wing} · ${programme.category.join(", ")}`}
           action={
             <div className="flex items-center gap-3">
               <StatusBadge status={programme.status} />
-              {(user.role === "wing" || user.role === "super_admin") &&
+              {["wing", "super_admin", "union", "teacher"].includes(user.role) &&
                 (programme.status === "submitted" || programme.status === "draft") && (
                   <Button
                     variant="outline"
@@ -242,7 +242,7 @@ export default function ProgrammeDetailPage() {
               </div>
             )}
 
-            {(programme.status === "booked" || programme.status === "completed") && (
+            {true && (
               <div className="rounded-xl border bg-card p-6 shadow-sm">
                 <h3 className="text-sm font-semibold flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" /> Comments ({programme.comments.length})

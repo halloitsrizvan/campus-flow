@@ -3,7 +3,7 @@
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
-import { useApp, venueName } from "@/lib/mock";
+import { useApp, venueName, getScopedProgrammes } from "@/lib/mock";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -19,11 +19,14 @@ import { format } from "date-fns";
 export default function ApprovalsPage() {
   const user = useApp((s) => s.user);
   const programmes = useApp((s) => s.programmes);
+  const users = useApp((s) => s.users);
   const router = useRouter();
 
   if (!user) return null;
 
-  const pending = programmes.filter((p) =>
+  const scoped = getScopedProgrammes(programmes, user, users);
+
+  const pending = scoped.filter((p) =>
     user.role === "union" ? p.status === "submitted" : p.status === "union_approved",
   );
 

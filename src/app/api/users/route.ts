@@ -52,6 +52,7 @@ export async function POST(req: Request) {
       password: data.password || "demo1234",
       role: data.role,
       wing: data.wing,
+      union: data.union,
     });
 
     const uObj = user.toJSON();

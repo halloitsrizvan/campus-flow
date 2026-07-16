@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useApp, type Role } from "@/lib/mock";
+import { useApp } from "@/lib/mock";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GraduationCap, ShieldCheck, Users2, Settings2 } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -14,41 +14,14 @@ export default function LoginPage() {
   const router = useRouter();
   const user = useApp((s) => s.user);
   const login = useApp((s) => s.login);
-  const [role, setRole] = useState<Role>("wing");
-  const [username, setUsername] = useState("rahul.m");
-  const [password, setPassword] = useState("demo1234");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) router.push("/dashboard");
   }, [user, router]);
 
-  const roleOptions: {
-    id: Role;
-    label: string;
-    icon: React.ComponentType<{ className?: string }>;
-    blurb: string;
-  }[] = [
-    {
-      id: "wing",
-      label: "Wing Admin",
-      icon: Users2,
-      blurb: "Register & manage your wing's programmes.",
-    },
-    {
-      id: "union",
-      label: "Union Admin",
-      icon: ShieldCheck,
-      blurb: "Approve, monitor and manage venues.",
-    },
-    { id: "teacher", label: "Teacher", icon: GraduationCap, blurb: "Final approval & oversight." },
-    {
-      id: "super_admin",
-      label: "Super Admin",
-      icon: Settings2,
-      blurb: "Manage roles and system users.",
-    },
-  ];
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
@@ -127,49 +100,6 @@ export default function LoginPage() {
                 }
               }}
             >
-              <div className="space-y-1.5">
-                <Label>Sign in as</Label>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {roleOptions.map((o) => {
-                    const Icon = o.icon;
-                    const active = role === o.id;
-                    return (
-                      <button
-                        key={o.id}
-                        type="button"
-                        onClick={() => {
-                          setRole(o.id);
-                          if (o.id === "super_admin") {
-                            setUsername("admin@campusflow.com");
-                            setPassword("admincf");
-                          } else if (o.id === "wing") {
-                            setUsername("rahul.m");
-                            setPassword("demo1234");
-                          } else if (o.id === "union") {
-                            setUsername("anita.s");
-                            setPassword("demo1234");
-                          } else if (o.id === "teacher") {
-                            setUsername("prof.menon");
-                            setPassword("demo1234");
-                          }
-                        }}
-                        className={cn(
-                          "flex flex-col items-center gap-1.5 rounded-lg border p-3 text-xs font-medium transition-colors",
-                          active
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border text-muted-foreground hover:bg-muted/60",
-                        )}
-                      >
-                        <Icon className="h-4 w-4" />
-                        {o.label}
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="pt-1 text-xs text-muted-foreground">
-                  {roleOptions.find((o) => o.id === role)?.blurb}
-                </p>
-              </div>
 
               <div className="space-y-1.5">
                 <Label htmlFor="username">Username</Label>

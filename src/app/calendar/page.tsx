@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { StatusBadge } from "@/components/status-badge";
-import { useApp, venueName } from "@/lib/mock";
+import { useApp, venueName, getScopedProgrammes } from "@/lib/mock";
 import {
   format,
   addDays,
@@ -39,8 +39,14 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export default function CalendarPage() {
   const programmes = useApp((s) => s.programmes);
+  const user = useApp((s) => s.user);
+  const users = useApp((s) => s.users);
   const [cursor, setCursor] = useState(new Date());
   const [selected, setSelected] = useState<string | null>(null);
+
+  const scoped = useMemo(() => {
+    return getScopedProgrammes(programmes, user, users);
+  }, [user, programmes, users]);
 
   const grid = useMemo(() => {
     const start = startOfWeek(startOfMonth(cursor));
@@ -100,9 +106,8 @@ export default function CalendarPage() {
           </div>
           <div className="grid grid-cols-7">
             {grid.map((day, i) => {
-              const dayProgrammes = programmes.filter(
-                (p) => isSameDay(new Date(p.date), day) && p.status !== "rejected",
-              );
+              const dayProgrammes = scoped
+                .filter((p) => isSameDay(new Date(p.date), day) && p.status !== "draft" && p.status !== "rejected");
               const inMonth = isSameMonth(day, cursor);
               const today = isToday(day);
               return (
@@ -128,7 +133,7 @@ export default function CalendarPage() {
                         onClick={() => setSelected(p.id)}
                         className={cn(
                           "block w-full truncate rounded border px-1.5 py-0.5 text-left text-[11px] font-medium cursor-pointer",
-                          CATEGORY_COLORS[p.category] ?? "bg-muted text-foreground border-border",
+                          CATEGORY_COLORS[p.category[0]] ?? "bg-muted text-foreground border-border",
                         )}
                       >
                         {p.startTime} {p.name}
@@ -165,7 +170,7 @@ export default function CalendarPage() {
                 <SheetHeader>
                   <SheetTitle>{programme.name}</SheetTitle>
                   <SheetDescription>
-                    {programme.wing} · {programme.category}
+                    {programme.wing} · {programme.category.join(", ")}
                   </SheetDescription>
                 </SheetHeader>
                 <div className="mt-6 space-y-4 text-sm">

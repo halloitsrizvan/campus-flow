@@ -1,7 +1,7 @@
 "use client";
 
 import { AppShell, PageHeader } from "@/components/app-shell";
-import { useApp, venueName, CATEGORIES } from "@/lib/mock";
+import { useApp, venueName, CATEGORIES, getScopedProgrammes } from "@/lib/mock";
 import { Button } from "@/components/ui/button";
 import {
   BarChart,
@@ -21,9 +21,13 @@ import { toast } from "sonner";
 
 export default function ReportsPage() {
   const programmes = useApp((s) => s.programmes);
+  const user = useApp((s) => s.user);
+  const users = useApp((s) => s.users);
+
+  const scoped = getScopedProgrammes(programmes, user, users);
 
   const venueUsage: Record<string, number> = {};
-  programmes.forEach((p) => {
+  scoped.forEach((p) => {
     const v = venueName(p.venueId);
     venueUsage[v] = (venueUsage[v] ?? 0) + 1;
   });
@@ -31,26 +35,27 @@ export default function ReportsPage() {
 
   const catUsage: Record<string, number> = {};
   CATEGORIES.forEach((c) => (catUsage[c] = 0));
-  programmes.forEach((p) => (catUsage[p.category] = (catUsage[p.category] ?? 0) + 1));
+  scoped.forEach((p) => p.category.forEach(c => catUsage[c] = (catUsage[c] ?? 0) + 1));
   const catData = Object.entries(catUsage)
     .filter(([, v]) => v > 0)
     .map(([name, value]) => ({ name, value }));
 
   const budgetByCat: Record<string, number> = {};
-  programmes.forEach(
-    (p) =>
-      (budgetByCat[p.category] =
-        (budgetByCat[p.category] ?? 0) + p.budget.reduce((a, c) => a + c.amount, 0)),
-  );
+  scoped.forEach((p) => {
+    const totalBudget = p.budget.reduce((a, c) => a + c.amount, 0);
+    p.category.forEach((c) => {
+      budgetByCat[c] = (budgetByCat[c] ?? 0) + (totalBudget / p.category.length);
+    });
+  });
   const budgetData = Object.entries(budgetByCat).map(([name, budget]) => ({ name, budget }));
 
   const approvalStats = [
-    { label: "Booked", value: programmes.filter((p) => p.status === "teacher_approved").length },
-    { label: "Rejected", value: programmes.filter((p) => p.status === "rejected").length },
-    { label: "Completed", value: programmes.filter((p) => p.status === "completed").length },
+    { label: "Booked", value: scoped.filter((p) => p.status === "teacher_approved").length },
+    { label: "Rejected", value: scoped.filter((p) => p.status === "rejected").length },
+    { label: "Completed", value: scoped.filter((p) => p.status === "completed").length },
     {
       label: "Pending",
-      value: programmes.filter((p) => ["submitted", "union_approved"].includes(p.status)).length,
+      value: scoped.filter((p) => ["submitted", "union_approved"].includes(p.status)).length,
     },
   ];
 

@@ -7,6 +7,7 @@ export interface IUser extends Document {
   password?: string;
   role: Role;
   wing?: string;
+  union?: string;
 }
 
 const UserSchema: Schema = new Schema(
@@ -17,6 +18,7 @@ const UserSchema: Schema = new Schema(
     password: { type: String }, // Optional for mock users if we want them passwordless, but required for super admin
     role: { type: String, required: true },
     wing: { type: String },
+    union: { type: String },
   },
   {
     timestamps: true,

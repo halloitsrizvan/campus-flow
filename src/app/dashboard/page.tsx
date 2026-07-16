@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { StatCard } from "@/components/stat-card";
 import { StatusBadge } from "@/components/status-badge";
-import { useApp, venueName } from "@/lib/mock";
+import { useApp, getScopedProgrammes, venueName } from "@/lib/mock";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -55,9 +55,10 @@ export default function DashboardPage() {
 function DashboardContent() {
   const user = useApp((s) => s.user);
   const programmes = useApp((s) => s.programmes);
+  const users = useApp((s) => s.users);
   if (!user) return null;
 
-  const scoped = user.role === "wing" ? programmes.filter((p) => p.wing === user.wing) : programmes;
+  const scoped = getScopedProgrammes(programmes, user, users);
 
   const total = scoped.length;
   const pending = scoped.filter(
@@ -90,7 +91,7 @@ function DashboardContent() {
 
   const roleTitle: Record<string, string> = {
     wing: `Welcome, ${user.name.split(" ")[0]}`,
-    union: "Union Dashboard",
+    union: user.union ? `${user.union} Union Dashboard` : "Union Dashboard",
     teacher: "Faculty Dashboard",
   };
   const roleSubtitle: Record<string, string> = {

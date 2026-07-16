@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
-import { useApp, venueName, CATEGORIES, type ProgrammeStatus } from "@/lib/mock";
+import { useApp, venueName, CATEGORIES, type ProgrammeStatus, statusMeta, getScopedProgrammes } from "@/lib/mock";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -61,16 +61,17 @@ export default function ProgrammesPage() {
   const removeProgramme = useApp((s) => s.removeProgramme);
   const updateProgramme = useApp((s) => s.updateProgramme);
   const perPage = 8;
+  const users = useApp((s) => s.users);
+
   const scoped = useMemo(() => {
-    if (!user) return [];
-    return user.role === "wing" ? programmes.filter((p) => p.wing === user.wing) : programmes;
-  }, [user, programmes]);
+    return getScopedProgrammes(programmes, user, users);
+  }, [user, programmes, users]);
 
   const filtered = useMemo(() => {
     return scoped.filter((p) => {
       if (status !== "all" && p.status !== status) return false;
-      if (category !== "all" && p.category !== category) return false;
-      if (q && !`${p.name} ${p.wing} ${p.category}`.toLowerCase().includes(q.toLowerCase()))
+      if (category !== "all" && !p.category.includes(category)) return false;
+      if (q && !`${p.name} ${p.wing} ${p.category.join(" ")}`.toLowerCase().includes(q.toLowerCase()))
         return false;
       return true;
     });
@@ -193,7 +194,7 @@ export default function ProgrammesPage() {
                         <div className="font-medium">{p.name}</div>
                         <div className="text-xs text-muted-foreground">{p.wing}</div>
                       </TableCell>
-                      <TableCell className="text-sm">{p.category}</TableCell>
+                      <TableCell className="text-sm">{p.category.join(", ")}</TableCell>
                       <TableCell className="text-sm">{venueName(p.venueId)}</TableCell>
                       <TableCell className="text-sm">
                         {format(new Date(p.date), "MMM d, yyyy")}
