@@ -189,10 +189,27 @@ export default function ProgrammeDetailPage() {
             {programme.poster && (
               <div className="rounded-xl border bg-card p-6 shadow-sm">
                 <h3 className="text-sm font-semibold">Poster</h3>
+                {programme.poster.url && (
+                  <div className="mt-4 mb-4 relative aspect-[4/3] w-full max-w-sm overflow-hidden rounded-lg border">
+                    <img
+                      src={programme.poster.url}
+                      alt={programme.poster.name}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                )}
                 <ul className="mt-3 divide-y rounded-lg border">
                   <li className="flex items-center gap-3 p-3 text-sm">
                     <Paperclip className="h-4 w-4 text-muted-foreground" />
-                    <span className="flex-1 truncate">{programme.poster.name}</span>
+                    <span className="flex-1 truncate">
+                      {programme.poster.url ? (
+                        <a href={programme.poster.url} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                          {programme.poster.name}
+                        </a>
+                      ) : (
+                        programme.poster.name
+                      )}
+                    </span>
                     <span className="text-xs text-muted-foreground">{programme.poster.size}</span>
                   </li>
                 </ul>

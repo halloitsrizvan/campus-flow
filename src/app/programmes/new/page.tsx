@@ -59,6 +59,7 @@ function RegisterWizard() {
   const programmes = useApp((s) => s.programmes);
   const addProgramme = useApp((s) => s.addProgramme);
   const [step, setStep] = useState(1);
+  const [isUploading, setIsUploading] = useState(false);
   const [form, setForm] = useState({
     name: "",
     category: "",
@@ -73,7 +74,7 @@ function RegisterWizard() {
     guests: [] as { name: string; position: string }[],
     equipment: [] as string[],
     budget: [] as { item: string; amount: number }[],
-    poster: null as { name: string; size: string } | null,
+    poster: null as { name: string; size: string; url?: string } | null,
   });
   const conflict = useMemo(() => {
     if (!form.venueId || !form.date) return null;
@@ -482,25 +483,56 @@ function RegisterWizard() {
         {step === 5 && (
           <div className="space-y-4">
             <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 text-center hover:bg-muted/40">
-              <Upload className="h-6 w-6 text-muted-foreground" />
-              <div className="mt-2 text-sm font-medium">Click to upload Poster</div>
+              {isUploading ? (
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+              ) : (
+                <Upload className="h-6 w-6 text-muted-foreground" />
+              )}
+              <div className="mt-2 text-sm font-medium">
+                {isUploading ? "Uploading..." : "Click to upload Poster"}
+              </div>
               <div className="text-xs text-muted-foreground">
-                Image files only (mock)
+                Image files only
               </div>
               <input
                 type="file"
                 accept="image/*"
                 className="hidden"
-                onChange={(e) => {
+                disabled={isUploading}
+                onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (file) {
-                    setForm({
-                      ...form,
-                      poster: {
-                        name: file.name,
-                        size: `${(file.size / 1024).toFixed(0)} KB`,
+                    setIsUploading(true);
+                    try {
+                      const formData = new FormData();
+                      formData.append("file", file);
+                      formData.append("upload_preset", "college_db");
+                      
+                      const res = await fetch("https://api.cloudinary.com/v1_1/dqgspgrul/image/upload", {
+                        method: "POST",
+                        body: formData,
+                      });
+                      
+                      if (!res.ok) {
+                        throw new Error("Failed to upload image");
                       }
-                    });
+                      
+                      const data = await res.json();
+                      setForm({
+                        ...form,
+                        poster: {
+                          name: file.name,
+                          size: `${(file.size / 1024).toFixed(0)} KB`,
+                          url: data.secure_url,
+                        }
+                      });
+                      toast.success("Poster uploaded successfully");
+                    } catch (error) {
+                      toast.error("Error uploading poster");
+                      console.error(error);
+                    } finally {
+                      setIsUploading(false);
+                    }
                   }
                 }}
               />

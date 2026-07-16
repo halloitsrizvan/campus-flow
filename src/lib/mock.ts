@@ -32,7 +32,7 @@ export interface Programme {
   budget: { item: string; amount: number }[];
   status: ProgrammeStatus;
   createdAt: string;
-  poster?: { name: string; size: string };
+  poster?: { name: string; size: string; url?: string };
   comments: { id: string; author: string; role: Role; text: string; at: string }[];
   timeline: { label: string; at?: string; done: boolean }[];
   rating?: number;

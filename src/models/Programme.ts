@@ -17,6 +17,7 @@ export interface ITimelineItem {
 export interface IPoster {
   name: string;
   size: string;
+  url?: string;
 }
 
 export interface IProgramme extends Document {
@@ -67,6 +68,7 @@ const PosterSchema = new Schema(
   {
     name: { type: String, required: true },
     size: { type: String, required: true },
+    url: { type: String },
   },
   { _id: false },
 );
