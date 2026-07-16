@@ -319,10 +319,14 @@ export function statusMeta(s: ProgrammeStatus) {
     case "union_approved":
       return { label: "Union Approved", cls: "bg-primary/10 text-primary border-primary/30" };
     case "teacher_approved":
-      return { label: "Booked", cls: "bg-success/15 text-success border-success/30" };
+      return { label: "Teacher Approved", cls: "bg-primary/20 text-primary border-primary/40" };
+    case "booked":
+      return { label: "Booked", cls: "bg-success/20 text-success border-success/40" };
     case "rejected":
       return { label: "Rejected", cls: "bg-destructive/10 text-destructive border-destructive/30" };
     case "completed":
-      return { label: "Completed", cls: "bg-accent text-accent-foreground border-border" };
+      return { label: "Completed", cls: "bg-success/10 text-success border-success/30" };
+    default:
+      return { label: "Unknown", cls: "bg-muted text-muted-foreground" };
   }
 }
