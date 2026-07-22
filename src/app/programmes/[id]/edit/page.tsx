@@ -29,7 +29,9 @@ export default function EditProgrammePage({ params }: { params: Promise<{ id: st
   const isEditable = 
     user && 
     ["wing", "super_admin", "union", "teacher"].includes(user.role) && 
-    (programme.status === "submitted" || programme.status === "draft");
+    (programme.status === "submitted" || 
+      programme.status === "draft" || 
+      (user.role === "union" && (programme.status === "booked" || programme.status === "completed")));
 
   if (!isEditable) {
     return (

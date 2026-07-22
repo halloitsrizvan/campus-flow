@@ -4,6 +4,15 @@ import { AppShell, PageHeader } from "@/components/app-shell";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useApp, venueName } from "@/lib/mock";
 import {
   ArrowLeft,
@@ -32,7 +41,16 @@ export default function ProgrammeDetailPage() {
   const programme = useApp((s) => s.programmes.find((p) => p.id === id));
   const updateProgramme = useApp((s) => s.updateProgramme);
   const [comment, setComment] = useState("");
-  const [rating, setRating] = useState(0);
+  const [reviewData, setReviewData] = useState<{
+    tier: string;
+    photoGallery: string[];
+    mark: string;
+  }>({
+    tier: "",
+    photoGallery: [],
+    mark: "",
+  });
+  const [newPhoto, setNewPhoto] = useState("");
 
   if (!user) return null;
   if (!programme) {
@@ -78,12 +96,36 @@ export default function ProgrammeDetailPage() {
       updateProgramme(programme!.id, {
         status: "teacher_approved",
         timeline: programme!.timeline.map((t) => {
-          if (t.label.toLowerCase().includes("teacher") || t.label.toLowerCase() === "booked")
+          if (t.label.toLowerCase().includes("teacher"))
             return { ...t, done: true, at: new Date().toISOString() };
           return t;
         }),
       });
-      toast.success("Approved by Faculty — venue booked");
+      toast.success("Approved by Union Teacher");
+    } else if (user!.role === "principal") {
+      const needsMic = programme!.equipment?.includes("Mic");
+      updateProgramme(programme!.id, {
+        status: needsMic ? "principal_approved" : "booked",
+        timeline: programme!.timeline.map((t) => {
+          if (
+            t.label.toLowerCase().includes("principal") ||
+            (!needsMic && t.label.toLowerCase() === "booked")
+          )
+            return { ...t, done: true, at: new Date().toISOString() };
+          return t;
+        }),
+      });
+      toast.success(needsMic ? "Approved by Principal" : "Approved by Principal — venue booked");
+    } else if (user!.role === "mic_manager") {
+      updateProgramme(programme!.id, {
+        status: "booked",
+        timeline: programme!.timeline.map((t) => {
+          if (t.label.toLowerCase().includes("mic") || t.label.toLowerCase() === "booked")
+            return { ...t, done: true, at: new Date().toISOString() };
+          return t;
+        }),
+      });
+      toast.success("Approved by Mic Manager — venue booked");
     }
   }
 
@@ -94,14 +136,20 @@ export default function ProgrammeDetailPage() {
 
   const canApprove =
     (user.role === "union" && programme.status === "submitted") ||
-    (user.role === "teacher" && programme.status === "union_approved");
+    (user.role === "teacher" && programme.status === "union_approved") ||
+    (user.role === "principal" && programme.status === "teacher_approved") ||
+    (user.role === "mic_manager" && programme.status === "principal_approved");
 
-  function submitRating() {
-    if (!rating) return;
-    updateProgramme(programme!.id, { rating, ratingRemarks: comment });
-    setRating(0);
-    setComment("");
-    toast.success("Rating submitted");
+  function submitReview() {
+    if (!reviewData.tier || !reviewData.mark) {
+      toast.error("Please fill in tier and mark.");
+      return;
+    }
+    updateProgramme(programme!.id, {
+      status: "completed",
+      review: reviewData,
+    });
+    toast.success("Review submitted");
   }
 
   return (
@@ -123,7 +171,10 @@ export default function ProgrammeDetailPage() {
             <div className="flex items-center gap-3">
               <StatusBadge status={programme.status} />
               {["wing", "super_admin", "union", "teacher"].includes(user.role) &&
-                (programme.status === "submitted" || programme.status === "draft") && (
+                (programme.status === "submitted" ||
+                  programme.status === "draft" ||
+                  (user.role === "union" &&
+                    (programme.status === "booked" || programme.status === "completed"))) && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -288,31 +339,118 @@ export default function ProgrammeDetailPage() {
               </div>
             )}
 
-            {user.role === "union" && programme.status === "completed" && !programme.rating && (
+            {user.role === "union" && (programme.status === "booked" || programme.status === "completed") && !programme.review && (
               <div className="rounded-xl border bg-card p-6 shadow-sm">
-                <h3 className="text-sm font-semibold">Rate this programme</h3>
-                <div className="mt-3 flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <button key={s} onClick={() => setRating(s)} type="button">
-                      <Star
-                        className={cn(
-                          "h-6 w-6 cursor-pointer",
-                          s <= rating ? "fill-warning text-warning" : "text-muted-foreground",
-                        )}
+                <h3 className="text-sm font-semibold">Post-Event Review</h3>
+                <div className="mt-4 space-y-4">
+                  <div className="space-y-2">
+                    <Label>Tier</Label>
+                    <Select
+                      value={reviewData.tier}
+                      onValueChange={(v) => setReviewData({ ...reviewData, tier: v })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Tier" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1st Tier">1st Tier</SelectItem>
+                        <SelectItem value="2nd Tier">2nd Tier</SelectItem>
+                        <SelectItem value="Publication">Publication</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Photo Gallery (Image URLs)</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="https://..."
+                        value={newPhoto}
+                        onChange={(e) => setNewPhoto(e.target.value)}
                       />
-                    </button>
-                  ))}
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => {
+                          if (newPhoto) {
+                            setReviewData({
+                              ...reviewData,
+                              photoGallery: [...reviewData.photoGallery, newPhoto],
+                            });
+                            setNewPhoto("");
+                          }
+                        }}
+                      >
+                        Add
+                      </Button>
+                    </div>
+                    {reviewData.photoGallery.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {reviewData.photoGallery.map((url, i) => (
+                          <div key={i} className="flex items-center gap-1 rounded bg-muted px-2 py-1 text-xs">
+                            <span className="truncate max-w-[150px]">{url}</span>
+                            <button
+                              onClick={() =>
+                                setReviewData({
+                                  ...reviewData,
+                                  photoGallery: reviewData.photoGallery.filter((_, idx) => idx !== i),
+                                })
+                              }
+                            >
+                              <X className="h-3 w-3 hover:text-destructive" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Mark</Label>
+                    <Input
+                      placeholder="e.g. A, B, 90/100"
+                      value={reviewData.mark}
+                      onChange={(e) => setReviewData({ ...reviewData, mark: e.target.value })}
+                    />
+                  </div>
                 </div>
-                <Textarea
-                  className="mt-3"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Remarks…"
-                  rows={2}
-                />
-                <Button className="mt-3" size="sm" onClick={submitRating}>
-                  Submit rating
+                <Button className="mt-6" size="sm" onClick={submitReview}>
+                  Submit Review
                 </Button>
+              </div>
+            )}
+
+            {programme.review && (
+              <div className="rounded-xl border bg-card p-6 shadow-sm">
+                <h3 className="text-sm font-semibold">Event Review</h3>
+                <div className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
+                  <div>
+                    <div className="text-xs text-muted-foreground">Tier</div>
+                    <div className="font-medium">{programme.review.tier}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">Mark</div>
+                    <div className="font-medium">{programme.review.mark}</div>
+                  </div>
+                  {programme.review.photoGallery.length > 0 && (
+                    <div className="sm:col-span-2">
+                      <div className="text-xs text-muted-foreground">Photo Gallery</div>
+                      <div className="mt-1 flex flex-wrap gap-2">
+                        {programme.review.photoGallery.map((url, i) => (
+                          <a
+                            key={i}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:underline"
+                          >
+                            Image {i + 1}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -355,8 +493,12 @@ export default function ProgrammeDetailPage() {
                 <h3 className="text-sm font-semibold">Approval Actions</h3>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {user.role === "union"
-                    ? "Review and approve for faculty sign-off."
-                    : "Provide final approval and confirm booking."}
+                    ? "Review and approve for union teacher sign-off."
+                    : user.role === "teacher"
+                      ? "Review and approve for principal sign-off."
+                      : user.role === "principal"
+                        ? "Review and approve for final or mic sign-off."
+                        : "Provide final approval and confirm booking."}
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-2">
                   <Button

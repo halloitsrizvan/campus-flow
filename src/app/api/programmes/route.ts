@@ -37,8 +37,7 @@ export async function POST(req: Request) {
       poster: data.poster,
       comments: data.comments || [],
       timeline: data.timeline || [],
-      rating: data.rating,
-      ratingRemarks: data.ratingRemarks,
+      review: data.review,
       committeeApproved: data.committeeApproved,
       teacherApproved: data.teacherApproved,
     });

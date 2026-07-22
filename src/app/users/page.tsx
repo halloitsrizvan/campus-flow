@@ -55,7 +55,7 @@ function roleLabel(role: Role) {
       };
     case "teacher":
       return {
-        label: "Teacher",
+        label: "Union Teacher",
         icon: GraduationCap,
         cls: "bg-success/15 text-success border-success/30",
       };
@@ -64,6 +64,18 @@ function roleLabel(role: Role) {
         label: "Union Admin",
         icon: ShieldCheck,
         cls: "bg-primary/10 text-primary border-primary/30",
+      };
+    case "principal":
+      return {
+        label: "Principal",
+        icon: ShieldCheck,
+        cls: "bg-primary/10 text-primary border-primary/30",
+      };
+    case "mic_manager":
+      return {
+        label: "Mic Manager",
+        icon: Settings2,
+        cls: "bg-muted text-muted-foreground border-muted/30",
       };
     case "wing":
       return { label: "Wing Admin", icon: Users2, cls: "bg-info/10 text-info border-info/30" };
@@ -136,7 +148,9 @@ function UsersContent() {
           <TabsTrigger value="all">All Users</TabsTrigger>
           <TabsTrigger value="wing">Wing Admins</TabsTrigger>
           <TabsTrigger value="union">Union Admins</TabsTrigger>
-          <TabsTrigger value="teacher">Teachers</TabsTrigger>
+          <TabsTrigger value="teacher">Union Teachers</TabsTrigger>
+          <TabsTrigger value="principal">Principals</TabsTrigger>
+          <TabsTrigger value="mic_manager">Mic Managers</TabsTrigger>
         </TabsList>
 
         <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
@@ -326,7 +340,9 @@ function UserFormModal({ mode, user }: { mode: "create" | "edit"; user?: User })
               <SelectContent>
                 <SelectItem value="wing">Wing Admin</SelectItem>
                 <SelectItem value="union">Union Admin</SelectItem>
-                <SelectItem value="teacher">Teacher</SelectItem>
+                <SelectItem value="teacher">Union Teacher</SelectItem>
+                <SelectItem value="principal">Principal</SelectItem>
+                <SelectItem value="mic_manager">Mic Manager</SelectItem>
                 <SelectItem value="super_admin">Super Admin</SelectItem>
               </SelectContent>
             </Select>
@@ -342,7 +358,9 @@ function UserFormModal({ mode, user }: { mode: "create" | "edit"; user?: User })
               />
             </div>
           )}
-          {formData.role !== "super_admin" && (
+          {formData.role !== "super_admin" &&
+            formData.role !== "principal" &&
+            formData.role !== "mic_manager" && (
             <div className="space-y-2">
               <Label>Union</Label>
               <Select

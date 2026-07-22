@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type Role = "wing" | "union" | "teacher" | "super_admin";
+export type Role = "wing" | "union" | "teacher" | "principal" | "mic_manager" | "super_admin";
 
 export interface User {
   id: string;
@@ -18,6 +18,8 @@ export type ProgrammeStatus =
   | "submitted"
   | "union_approved"
   | "teacher_approved"
+  | "principal_approved"
+  | "mic_approved"
   | "booked"
   | "rejected"
   | "completed";
@@ -42,8 +44,11 @@ export interface Programme {
   poster?: { name: string; size: string; url?: string };
   comments: { id: string; author: string; role: Role; text: string; at: string }[];
   timeline: { label: string; at?: string; done: boolean }[];
-  rating?: number;
-  ratingRemarks?: string;
+  review?: {
+    tier: string;
+    photoGallery: string[];
+    mark: string;
+  };
   committeeApproved?: boolean;
   teacherApproved?: boolean;
 }
@@ -320,7 +325,7 @@ export function statusMeta(s: ProgrammeStatus) {
     case "union_approved":
       return { label: "Union Approved", cls: "bg-primary/10 text-primary border-primary/30" };
     case "teacher_approved":
-      return { label: "Teacher Approved", cls: "bg-primary/20 text-primary border-primary/40" };
+      return { label: "Union Teacher Approved", cls: "bg-primary/20 text-primary border-primary/40" };
     case "booked":
       return { label: "Booked", cls: "bg-success/20 text-success border-success/40" };
     case "rejected":
@@ -355,6 +360,18 @@ export function getScopedProgrammes(programmes: Programme[], user: User | null, 
       if (teacherWings && !teacherWings.includes(p.wingId)) return false;
       // Only show after union approval
       return p.timeline.some((t) => t.label.toLowerCase().includes("union") && t.done);
+    });
+  }
+  
+  if (user.role === "principal") {
+    return programmes.filter((p) => {
+      return p.timeline.some((t) => t.label.toLowerCase().includes("teacher") && t.done);
+    });
+  }
+
+  if (user.role === "mic_manager") {
+    return programmes.filter((p) => {
+      return p.timeline.some((t) => t.label.toLowerCase().includes("principal") && t.done);
     });
   }
   

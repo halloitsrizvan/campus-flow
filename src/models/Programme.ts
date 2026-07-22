@@ -38,8 +38,11 @@ export interface IProgramme extends Document {
   poster?: IPoster;
   comments: IComment[];
   timeline: ITimelineItem[];
-  rating?: number;
-  ratingRemarks?: string;
+  review?: {
+    tier: string;
+    photoGallery: string[];
+    mark: string;
+  };
   committeeApproved?: boolean;
   teacherApproved?: boolean;
 }
@@ -89,6 +92,15 @@ const BudgetItemSchema = new Schema(
   { _id: false },
 );
 
+const ReviewSchema = new Schema(
+  {
+    tier: { type: String, required: true },
+    photoGallery: [{ type: String }],
+    mark: { type: String, required: true },
+  },
+  { _id: false },
+);
+
 const ProgrammeSchema: Schema = new Schema(
   {
     _id: { type: String },
@@ -109,8 +121,7 @@ const ProgrammeSchema: Schema = new Schema(
     poster: PosterSchema,
     comments: [CommentSchema],
     timeline: [TimelineSchema],
-    rating: { type: Number },
-    ratingRemarks: { type: String },
+    review: ReviewSchema,
     committeeApproved: { type: Boolean, default: false },
     teacherApproved: { type: Boolean, default: false },
   },

@@ -45,7 +45,7 @@ const NAV: NavItem[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/programmes/new", label: "Register Programme", icon: FilePlus2, roles: ["wing"] },
   { to: "/programmes", label: "Programmes", icon: ClipboardList },
-  { to: "/approvals", label: "Approvals", icon: CheckCircle2, roles: ["union", "teacher"] },
+  { to: "/approvals", label: "Approvals", icon: CheckCircle2, roles: ["union", "teacher", "principal", "mic_manager"] },
   { to: "/calendar", label: "Venue Calendar", icon: CalendarDays },
   { to: "/venues", label: "Venues", icon: Building2, roles: ["union"] },
   { to: "/users", label: "Manage Users", icon: Users, roles: ["super_admin"] },
@@ -79,7 +79,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   const roleLabel: Record<Role, string> = {
     wing: "Wing Admin",
     union: user.union ? `${user.union} Union Admin` : "Union Admin",
-    teacher: "Faculty",
+    teacher: "Union Teacher",
+    principal: "Principal",
+    mic_manager: "Mic Manager",
     super_admin: "Super Admin",
   };
 

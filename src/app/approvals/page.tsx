@@ -26,9 +26,13 @@ export default function ApprovalsPage() {
 
   const scoped = getScopedProgrammes(programmes, user, users);
 
-  const pending = scoped.filter((p) =>
-    user.role === "union" ? p.status === "submitted" : p.status === "union_approved",
-  );
+  const pending = scoped.filter((p) => {
+    if (user.role === "union") return p.status === "submitted";
+    if (user.role === "teacher") return p.status === "union_approved";
+    if (user.role === "principal") return p.status === "teacher_approved";
+    if (user.role === "mic_manager") return p.status === "principal_approved";
+    return false;
+  });
 
   return (
     <AppShell>
@@ -40,7 +44,13 @@ export default function ApprovalsPage() {
           description={
             user.role === "union"
               ? "Programmes submitted by wings waiting for Union review."
-              : "Programmes cleared by Union waiting for final faculty approval."
+              : user.role === "teacher"
+                ? "Programmes cleared by Union waiting for union teacher approval."
+                : user.role === "principal"
+                  ? "Programmes cleared by Union Teacher waiting for principal approval."
+                  : user.role === "mic_manager"
+                    ? "Programmes waiting for mic permission."
+                    : "Pending approvals."
           }
         />
 

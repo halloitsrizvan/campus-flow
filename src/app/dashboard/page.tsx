@@ -92,12 +92,18 @@ function DashboardContent() {
   const roleTitle: Record<string, string> = {
     wing: `Welcome, ${user.name.split(" ")[0]}`,
     union: user.union ? `${user.union} Union Dashboard` : "Union Dashboard",
-    teacher: "Faculty Dashboard",
+    teacher: "Union Teacher Dashboard",
+    principal: "Principal Dashboard",
+    mic_manager: "Mic Permissions Dashboard",
+    super_admin: "Super Admin Dashboard",
   };
   const roleSubtitle: Record<string, string> = {
     wing: "Track your wing's programmes and submit new requests.",
     union: "Review all programmes, approvals and venue usage across college.",
     teacher: "Final approvals and college-wide programme oversight.",
+    principal: "Review and grant final permissions for events.",
+    mic_manager: "Manage and approve microphone permissions.",
+    super_admin: "System administration and overview.",
   };
 
   return (
