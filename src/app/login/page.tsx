@@ -22,7 +22,6 @@ export default function LoginPage() {
     if (user) router.push("/dashboard");
   }, [user, router]);
 
-
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
       <title>Sign in — VenueHub</title>
@@ -34,7 +33,7 @@ export default function LoginPage() {
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_10%,oklch(0.9_0.06_277/_0.6),transparent_50%),radial-gradient(circle_at_85%_90%,oklch(0.92_0.07_165/_0.55),transparent_45%)]"
       />
-      <div className="mx-auto grid min-h-screen max-w-6xl grid-cols-1 gap-10 px-6 py-10 lg:grid-cols-2 lg:items-center">
+      <div className="mx-auto grid min-h-screen max-w-6xl grid-cols-1 items-center gap-10 px-6 py-10 lg:grid-cols-2">
         {/* Left: brand panel */}
         <div className="hidden flex-col justify-between lg:flex">
           <div className="flex items-center gap-2">
@@ -100,7 +99,6 @@ export default function LoginPage() {
                 }
               }}
             >
-
               <div className="space-y-1.5">
                 <Label htmlFor="username">Username</Label>
                 <Input

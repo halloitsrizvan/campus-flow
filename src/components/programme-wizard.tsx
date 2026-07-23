@@ -52,7 +52,10 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
   const [step, setStep] = useState(1);
   const [isUploading, setIsUploading] = useState(false);
 
-  const isCustomVenue = initialData ? !venues.some(v => v.id === initialData.venueId) && !["Musjid", "Library", "Class", "Ground"].includes(initialData.venueId) : false;
+  const isCustomVenue = initialData
+    ? !venues.some((v) => v.id === initialData.venueId) &&
+      !["Musjid", "Library", "Class", "Ground"].includes(initialData.venueId)
+    : false;
 
   const [form, setForm] = useState({
     name: initialData?.name ?? "",
@@ -71,7 +74,7 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
     budget: initialData?.budget ?? ([] as { item: string; amount: number }[]),
     poster: initialData?.poster ?? (null as { name: string; size: string; url?: string } | null),
   });
-  
+
   const conflict = useMemo(() => {
     if (!form.venueId || !form.date) return null;
     return programmes.find(
@@ -87,8 +90,7 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
   if (!user) return null;
 
   const canNext = () => {
-    if (step === 1)
-      return !!form.name;
+    if (step === 1) return !!form.name;
     if (step === 2)
       return form.date && form.startTime && form.endTime && form.startTime < form.endTime;
     if (step === 3)
@@ -97,8 +99,7 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
         (form.venueId !== "custom" || form.customVenueName.trim().length > 0) &&
         !conflict
       );
-    if (step === 4)
-      return form.budget.every((b) => b.item.trim() && b.amount >= 0);
+    if (step === 4) return form.budget.every((b) => b.item.trim() && b.amount >= 0);
     return true;
   };
 
@@ -109,8 +110,8 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
       name: form.name,
       category: form.category,
       purpose: form.purpose,
-      wing: initialData?.wing ?? (user!.wing ?? "Unknown Wing"),
-      wingId: initialData?.wingId ?? "w1",
+      wing: initialData?.wing ?? user!.wing ?? user!.name ?? "Unknown Wing",
+      wingId: initialData?.wingId ?? user!.id,
       date: form.date,
       startTime: form.startTime,
       endTime: form.endTime,
@@ -123,19 +124,21 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
       createdAt: initialData?.createdAt ?? now,
       poster: form.poster ?? undefined,
       comments: initialData?.comments ?? [],
-      timeline: initialData?.timeline ?? (() => {
-        const base = [
-          { label: "Submitted by Wing", at: now, done: true },
-          { label: "Union Approval", done: false },
-          { label: "Union Teacher Approval", done: false },
-          { label: "Principal Approval", done: false },
-        ];
-        if (form.equipment.includes("Mic")) {
-          base.push({ label: "Mic Approval", done: false });
-        }
-        base.push({ label: "Booked", done: false });
-        return base;
-      })(),
+      timeline:
+        initialData?.timeline ??
+        (() => {
+          const base = [
+            { label: "Submitted by Wing", at: now, done: true },
+            { label: "Union Approval", done: false },
+            { label: "Union Teacher Approval", done: false },
+            { label: "Principal Approval", done: false },
+          ];
+          if (form.equipment.includes("Mic")) {
+            base.push({ label: "Mic Approval", done: false });
+          }
+          base.push({ label: "Booked", done: false });
+          return base;
+        })(),
       committeeApproved: initialData?.committeeApproved ?? false,
       teacherApproved: initialData?.teacherApproved ?? false,
     };
@@ -158,7 +161,11 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
     <div className="mx-auto max-w-4xl space-y-6">
       <PageHeader
         title={initialData ? "Edit Programme" : "Register Programme"}
-        description={initialData ? "Make changes to your submitted programme." : "Submit a new programme in 6 quick steps."}
+        description={
+          initialData
+            ? "Make changes to your submitted programme."
+            : "Submit a new programme in 6 quick steps."
+        }
       />
 
       {/* Stepper */}
@@ -231,7 +238,7 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
                 })}
               </div>
             </div>
-            
+
             <div className="grid gap-1.5 mt-2">
               <Label>Custom Behaviour</Label>
               <div className="flex gap-2">
@@ -242,25 +249,31 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();
-                      if (form.customCategory.trim() && !form.category.includes(form.customCategory.trim())) {
+                      if (
+                        form.customCategory.trim() &&
+                        !form.category.includes(form.customCategory.trim())
+                      ) {
                         setForm({
                           ...form,
                           category: [...form.category, form.customCategory.trim()],
-                          customCategory: ""
+                          customCategory: "",
                         });
                       }
                     }
                   }}
                 />
-                <Button 
-                  type="button" 
+                <Button
+                  type="button"
                   variant="outline"
                   onClick={() => {
-                    if (form.customCategory.trim() && !form.category.includes(form.customCategory.trim())) {
+                    if (
+                      form.customCategory.trim() &&
+                      !form.category.includes(form.customCategory.trim())
+                    ) {
                       setForm({
                         ...form,
                         category: [...form.category, form.customCategory.trim()],
-                        customCategory: ""
+                        customCategory: "",
                       });
                     }
                   }}
@@ -268,14 +281,25 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
                   Add
                 </Button>
               </div>
-              {form.category.filter(c => !["talk", "competition", "lecture"].includes(c)).length > 0 && (
+              {form.category.filter((c) => !["talk", "competition", "lecture"].includes(c)).length >
+                0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {form.category.filter(c => !["talk", "competition", "lecture"].includes(c)).map(cat => (
-                    <div key={cat} className="flex items-center gap-1 rounded-full border bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
-                      {cat}
-                      <X className="h-3 w-3 cursor-pointer" onClick={() => setForm({ ...form, category: form.category.filter(c => c !== cat) })} />
-                    </div>
-                  ))}
+                  {form.category
+                    .filter((c) => !["talk", "competition", "lecture"].includes(c))
+                    .map((cat) => (
+                      <div
+                        key={cat}
+                        className="flex items-center gap-1 rounded-full border bg-primary text-primary-foreground px-3 py-1 text-xs font-medium"
+                      >
+                        {cat}
+                        <X
+                          className="h-3 w-3 cursor-pointer"
+                          onClick={() =>
+                            setForm({ ...form, category: form.category.filter((c) => c !== cat) })
+                          }
+                        />
+                      </div>
+                    ))}
                 </div>
               )}
             </div>
@@ -555,25 +579,31 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();
-                      if (form.customEquipment.trim() && !form.equipment.includes(form.customEquipment.trim())) {
+                      if (
+                        form.customEquipment.trim() &&
+                        !form.equipment.includes(form.customEquipment.trim())
+                      ) {
                         setForm({
                           ...form,
                           equipment: [...form.equipment, form.customEquipment.trim()],
-                          customEquipment: ""
+                          customEquipment: "",
                         });
                       }
                     }
                   }}
                 />
-                <Button 
-                  type="button" 
+                <Button
+                  type="button"
                   variant="outline"
                   onClick={() => {
-                    if (form.customEquipment.trim() && !form.equipment.includes(form.customEquipment.trim())) {
+                    if (
+                      form.customEquipment.trim() &&
+                      !form.equipment.includes(form.customEquipment.trim())
+                    ) {
                       setForm({
                         ...form,
                         equipment: [...form.equipment, form.customEquipment.trim()],
-                        customEquipment: ""
+                        customEquipment: "",
                       });
                     }
                   }}
@@ -581,14 +611,39 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
                   Add
                 </Button>
               </div>
-              {form.equipment.filter(e => !["Mic", "Stool", "Carpet", "Projector", "Stage Lighting", "Speakers"].includes(e)).length > 0 && (
+              {form.equipment.filter(
+                (e) =>
+                  !["Mic", "Stool", "Carpet", "Projector", "Stage Lighting", "Speakers"].includes(
+                    e,
+                  ),
+              ).length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {form.equipment.filter(e => !["Mic", "Stool", "Carpet", "Projector", "Stage Lighting", "Speakers"].includes(e)).map(eq => (
-                    <div key={eq} className="flex items-center gap-1 rounded-full border bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
-                      {eq}
-                      <X className="h-3 w-3 cursor-pointer" onClick={() => setForm({ ...form, equipment: form.equipment.filter(c => c !== eq) })} />
-                    </div>
-                  ))}
+                  {form.equipment
+                    .filter(
+                      (e) =>
+                        ![
+                          "Mic",
+                          "Stool",
+                          "Carpet",
+                          "Projector",
+                          "Stage Lighting",
+                          "Speakers",
+                        ].includes(e),
+                    )
+                    .map((eq) => (
+                      <div
+                        key={eq}
+                        className="flex items-center gap-1 rounded-full border bg-primary text-primary-foreground px-3 py-1 text-xs font-medium"
+                      >
+                        {eq}
+                        <X
+                          className="h-3 w-3 cursor-pointer"
+                          onClick={() =>
+                            setForm({ ...form, equipment: form.equipment.filter((c) => c !== eq) })
+                          }
+                        />
+                      </div>
+                    ))}
                 </div>
               )}
             </div>

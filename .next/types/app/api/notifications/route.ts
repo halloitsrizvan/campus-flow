@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server.js'
 
 type TEntry = typeof import('../../../../../src/app/api/notifications/route.js')
 
-type SegmentParams<T extends Object = any> = T extends Record<string, any>
+type SegmentParams<T extends object = any> = T extends Record<string, any>
   ? { [K in keyof T]: T[K] extends string ? string | string[] | undefined : never }
   : T
 

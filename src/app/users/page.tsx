@@ -361,22 +361,22 @@ function UserFormModal({ mode, user }: { mode: "create" | "edit"; user?: User })
           {formData.role !== "super_admin" &&
             formData.role !== "principal" &&
             formData.role !== "mic_manager" && (
-            <div className="space-y-2">
-              <Label>Union</Label>
-              <Select
-                value={formData.union}
-                onValueChange={(val) => setFormData({ ...formData, union: val })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Union" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Lisan">Lisan</SelectItem>
-                  <SelectItem value="DSU">DSU</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+              <div className="space-y-2">
+                <Label>Union</Label>
+                <Select
+                  value={formData.union}
+                  onValueChange={(val) => setFormData({ ...formData, union: val })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Union" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Lisan">Lisan</SelectItem>
+                    <SelectItem value="DSU">DSU</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           <DialogFooter className="pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel

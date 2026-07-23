@@ -12,7 +12,7 @@ export function StatCard({
   value: string | number;
   icon: ReactNode;
   hint?: string;
-  tone?: "default" | "primary" | "success" | "warning" | "danger";
+  tone?: "default" | "primary" | "success" | "warning" | "danger" | "info";
 }) {
   const toneClasses: Record<string, string> = {
     default: "bg-muted text-foreground",
@@ -20,6 +20,7 @@ export function StatCard({
     success: "bg-success/15 text-success",
     warning: "bg-warning/15 text-warning",
     danger: "bg-destructive/10 text-destructive",
+    info: "bg-blue-500/10 text-blue-500",
   };
   return (
     <div className="rounded-xl border bg-card p-5 shadow-sm">

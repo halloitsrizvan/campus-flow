@@ -36,11 +36,6 @@
       "static/chunks/main-app.js",
       "static/chunks/app/dashboard/page.js"
     ],
-    "/programmes/[id]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/programmes/[id]/page.js"
-    ],
     "/users/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -56,10 +51,35 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/auth/login/route.js"
     ],
+    "/programmes/new/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/programmes/new/page.js"
+    ],
+    "/programmes/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/programmes/[id]/page.js"
+    ],
     "/programmes/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/programmes/page.js"
+    ],
+    "/venues/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/venues/page.js"
+    ],
+    "/programmes/[id]/edit/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/programmes/[id]/edit/page.js"
+    ],
+    "/api/programmes/[id]/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/programmes/[id]/route.js"
     ]
   }
 }

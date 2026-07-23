@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { StatCard } from "@/components/stat-card";
 import { StatusBadge } from "@/components/status-badge";
@@ -56,6 +57,8 @@ function DashboardContent() {
   const user = useApp((s) => s.user);
   const programmes = useApp((s) => s.programmes);
   const users = useApp((s) => s.users);
+  const updateProgramme = useApp((s) => s.updateProgramme);
+  const router = useRouter();
   if (!user) return null;
 
   const scoped = getScopedProgrammes(programmes, user, users);
@@ -66,6 +69,7 @@ function DashboardContent() {
   ).length;
   const approved = scoped.filter((p) => p.status === "teacher_approved").length;
   const rejected = scoped.filter((p) => p.status === "rejected").length;
+  const completed = scoped.filter((p) => p.status === "completed").length;
   const budget = scoped.reduce(
     (a, p) => a + p.budget.reduce((acc, curr) => acc + curr.amount, 0),
     0,
@@ -78,16 +82,19 @@ function DashboardContent() {
     { name: "Rejected", value: rejected, color: "var(--destructive)" },
     {
       name: "Completed",
-      value: scoped.filter((p) => p.status === "completed").length,
+      value: completed,
       color: "var(--info)",
     },
   ].filter((d) => d.value > 0);
 
   const recent = [...scoped].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)).slice(0, 5);
   const upcoming = [...scoped]
-    .filter((p) => new Date(p.date) >= new Date(new Date().toDateString()))
-    .sort((a, b) => (a.date < b.date ? -1 : 1))
-    .slice(0, 4);
+    .filter(
+      (p) =>
+        new Date(p.date) >= new Date(new Date().toDateString()) &&
+        !["submitted", "draft", "rejected", "completed"].includes(p.status),
+    )
+    .sort((a, b) => (a.date < b.date ? -1 : 1));
 
   const roleTitle: Record<string, string> = {
     wing: `Welcome, ${user.name.split(" ")[0]}`,
@@ -107,29 +114,31 @@ function DashboardContent() {
   };
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title={roleTitle[user.role]}
-        description={roleSubtitle[user.role]}
-        action={
-          user.role === "wing" ? (
-            <Button asChild>
-              <Link href="/programmes/new">
-                <CalendarPlus className="mr-2 h-4 w-4" /> Register Programme
-              </Link>
-            </Button>
-          ) : (
-            <Button variant="outline" asChild>
-              <Link href="/calendar">
-                <CalendarDays className="mr-2 h-4 w-4" /> View Calendar
-              </Link>
-            </Button>
-          )
-        }
-      />
+    <div className="flex flex-col gap-6">
+      <div className="order-1">
+        <PageHeader
+          title={roleTitle[user.role]}
+          description={roleSubtitle[user.role]}
+          action={
+            user.role === "wing" ? (
+              <Button asChild>
+                <Link href="/programmes/new">
+                  <CalendarPlus className="mr-2 h-4 w-4" /> Register Programme
+                </Link>
+              </Button>
+            ) : (
+              <Button variant="outline" asChild>
+                <Link href="/calendar">
+                  <CalendarDays className="mr-2 h-4 w-4" /> View Calendar
+                </Link>
+              </Button>
+            )
+          }
+        />
+      </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+      <div className="order-2 grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard
           label="Total Programmes"
           value={total}
@@ -148,10 +157,10 @@ function DashboardContent() {
           icon={<CheckCircle2 className="h-5 w-5" />}
         />
         <StatCard
-          label="Rejected"
-          value={rejected}
-          tone="danger"
-          icon={<XCircle className="h-5 w-5" />}
+          label="Completed"
+          value={completed}
+          tone="info"
+          icon={<CheckCircle2 className="h-5 w-5" />}
         />
         <StatCard
           label="Total Budget"
@@ -162,7 +171,7 @@ function DashboardContent() {
       </div>
 
       {/* Charts */}
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="order-4 lg:order-3 grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 rounded-xl border bg-card p-5 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <div>
@@ -233,7 +242,7 @@ function DashboardContent() {
       </div>
 
       {/* Tables */}
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="order-3 lg:order-4 grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 rounded-xl border bg-card shadow-sm">
           <div className="flex items-center justify-between border-b p-5">
             <h3 className="text-sm font-semibold">Recent Programmes</h3>
@@ -252,17 +261,34 @@ function DashboardContent() {
             </TableHeader>
             <TableBody>
               {recent.map((p) => (
-                <TableRow key={p.id}>
+                <TableRow
+                  key={p.id}
+                  onClick={() => router.push(`/programmes/${p.id}`)}
+                  className="cursor-pointer"
+                >
                   <TableCell>
-                    <Link href={`/programmes/${p.id}`} className="font-medium hover:underline">
-                      {p.name}
-                    </Link>
+                    <span className="font-medium hover:underline text-primary">{p.name}</span>
                     <div className="text-xs text-muted-foreground">{p.wing}</div>
                   </TableCell>
                   <TableCell className="text-sm">{venueName(p.venueId)}</TableCell>
                   <TableCell className="text-sm">{format(new Date(p.date), "MMM d")}</TableCell>
                   <TableCell>
-                    <StatusBadge status={p.status} />
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={p.status} />
+                      {user.role === "union" && p.status === "booked" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateProgramme(p.id, { status: "completed" });
+                          }}
+                        >
+                          Mark Completed
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -275,7 +301,7 @@ function DashboardContent() {
             <h3 className="text-sm font-semibold">Upcoming</h3>
             <p className="text-xs text-muted-foreground">Next scheduled programmes</p>
           </div>
-          <div className="divide-y">
+          <div className="divide-y max-h-[400px] overflow-y-auto">
             {upcoming.length === 0 && (
               <div className="p-6 text-center text-sm text-muted-foreground">
                 No upcoming programmes.

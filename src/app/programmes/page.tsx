@@ -4,7 +4,14 @@ import Link from "next/link";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
-import { useApp, venueName, CATEGORIES, type ProgrammeStatus, statusMeta, getScopedProgrammes } from "@/lib/mock";
+import {
+  useApp,
+  venueName,
+  CATEGORIES,
+  type ProgrammeStatus,
+  statusMeta,
+  getScopedProgrammes,
+} from "@/lib/mock";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -71,7 +78,10 @@ export default function ProgrammesPage() {
     return scoped.filter((p) => {
       if (status !== "all" && p.status !== status) return false;
       if (category !== "all" && !p.category.includes(category)) return false;
-      if (q && !`${p.name} ${p.wing} ${p.category.join(" ")}`.toLowerCase().includes(q.toLowerCase()))
+      if (
+        q &&
+        !`${p.name} ${p.wing} ${p.category.join(" ")}`.toLowerCase().includes(q.toLowerCase())
+      )
         return false;
       return true;
     });

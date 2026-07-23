@@ -35,7 +35,7 @@ export default function ReportsPage() {
 
   const catUsage: Record<string, number> = {};
   CATEGORIES.forEach((c) => (catUsage[c] = 0));
-  scoped.forEach((p) => p.category.forEach(c => catUsage[c] = (catUsage[c] ?? 0) + 1));
+  scoped.forEach((p) => p.category.forEach((c) => (catUsage[c] = (catUsage[c] ?? 0) + 1)));
   const catData = Object.entries(catUsage)
     .filter(([, v]) => v > 0)
     .map(([name, value]) => ({ name, value }));
@@ -44,7 +44,7 @@ export default function ReportsPage() {
   scoped.forEach((p) => {
     const totalBudget = p.budget.reduce((a, c) => a + c.amount, 0);
     p.category.forEach((c) => {
-      budgetByCat[c] = (budgetByCat[c] ?? 0) + (totalBudget / p.category.length);
+      budgetByCat[c] = (budgetByCat[c] ?? 0) + totalBudget / p.category.length;
     });
   });
   const budgetData = Object.entries(budgetByCat).map(([name, budget]) => ({ name, budget }));

@@ -325,7 +325,20 @@ export function statusMeta(s: ProgrammeStatus) {
     case "union_approved":
       return { label: "Union Approved", cls: "bg-primary/10 text-primary border-primary/30" };
     case "teacher_approved":
-      return { label: "Union Teacher Approved", cls: "bg-primary/20 text-primary border-primary/40" };
+      return {
+        label: "Union Teacher Approved",
+        cls: "bg-primary/20 text-primary border-primary/40",
+      };
+    case "principal_approved":
+      return {
+        label: "Principal Approved",
+        cls: "bg-primary/30 text-primary border-primary/50",
+      };
+    case "mic_approved":
+      return {
+        label: "Mic Approved",
+        cls: "bg-success/20 text-success border-success/40",
+      };
     case "booked":
       return { label: "Booked", cls: "bg-success/20 text-success border-success/40" };
     case "rejected":
@@ -337,32 +350,40 @@ export function statusMeta(s: ProgrammeStatus) {
   }
 }
 
-export function getScopedProgrammes(programmes: Programme[], user: User | null, users: User[]): Programme[] {
+export function getScopedProgrammes(
+  programmes: Programme[],
+  user: User | null,
+  users: User[],
+): Programme[] {
   if (!user) return [];
-  
+
   if (user.role === "wing") {
     return programmes.filter((p) => p.wing === user.wing || p.wingId === user.id);
   }
-  
+
   if (user.role === "union") {
-    const unionWings = users.filter((u) => u.role === "wing" && u.union === user.union).map((u) => u.id);
+    const unionWings = users
+      .filter((u) => u.role === "wing" && u.union === user.union)
+      .map((u) => u.id);
     return programmes.filter((p) => unionWings.includes(p.wingId));
   }
-  
+
   if (user.role === "teacher") {
     // If teacher has a union assigned, only show programmes from wings in that union
     let teacherWings: string[] | null = null;
     if (user.union) {
-      teacherWings = users.filter((u) => u.role === "wing" && u.union === user.union).map((u) => u.id);
+      teacherWings = users
+        .filter((u) => u.role === "wing" && u.union === user.union)
+        .map((u) => u.id);
     }
-    
+
     return programmes.filter((p) => {
       if (teacherWings && !teacherWings.includes(p.wingId)) return false;
       // Only show after union approval
-      return p.timeline.some((t) => t.label.toLowerCase().includes("union") && t.done);
+      return p.timeline.some((t) => t.label.toLowerCase() === "union approval" && t.done);
     });
   }
-  
+
   if (user.role === "principal") {
     return programmes.filter((p) => {
       return p.timeline.some((t) => t.label.toLowerCase().includes("teacher") && t.done);
@@ -374,6 +395,6 @@ export function getScopedProgrammes(programmes: Programme[], user: User | null, 
       return p.timeline.some((t) => t.label.toLowerCase().includes("principal") && t.done);
     });
   }
-  
+
   return programmes;
 }

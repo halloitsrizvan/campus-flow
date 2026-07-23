@@ -96,58 +96,65 @@ export default function CalendarPage() {
           }
         />
 
-        <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-          <div className="grid grid-cols-7 border-b bg-muted/40 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-              <div key={d} className="p-3 text-center">
-                {d}
-              </div>
-            ))}
-          </div>
-          <div className="grid grid-cols-7">
-            {grid.map((day, i) => {
-              const dayProgrammes = scoped
-                .filter((p) => isSameDay(new Date(p.date), day) && p.status !== "draft" && p.status !== "rejected");
-              const inMonth = isSameMonth(day, cursor);
-              const today = isToday(day);
-              return (
-                <div
-                  key={i}
-                  className={cn(
-                    "min-h-28 border-b border-r p-2 text-left align-top",
-                    !inMonth && "bg-muted/20 text-muted-foreground",
-                  )}
-                >
+        <div className="rounded-xl border bg-card shadow-sm overflow-x-auto">
+          <div className="min-w-[700px]">
+            <div className="grid grid-cols-7 border-b bg-muted/40 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+                <div key={d} className="p-3 text-center">
+                  {d}
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-7">
+              {grid.map((day, i) => {
+                const dayProgrammes = scoped.filter(
+                  (p) =>
+                    isSameDay(new Date(p.date), day) &&
+                    p.status !== "draft" &&
+                    p.status !== "rejected",
+                );
+                const inMonth = isSameMonth(day, cursor);
+                const today = isToday(day);
+                return (
                   <div
+                    key={i}
                     className={cn(
-                      "mb-1 inline-flex h-6 w-6 items-center justify-center rounded-full text-xs",
-                      today && "bg-primary text-primary-foreground font-semibold",
+                      "min-h-28 border-b border-r p-2 text-left align-top",
+                      !inMonth && "bg-muted/20 text-muted-foreground",
                     )}
                   >
-                    {format(day, "d")}
+                    <div
+                      className={cn(
+                        "mb-1 inline-flex h-6 w-6 items-center justify-center rounded-full text-xs",
+                        today && "bg-primary text-primary-foreground font-semibold",
+                      )}
+                    >
+                      {format(day, "d")}
+                    </div>
+                    <div className="space-y-1">
+                      {dayProgrammes.slice(0, 3).map((p) => (
+                        <button
+                          key={p.id}
+                          onClick={() => setSelected(p.id)}
+                          className={cn(
+                            "block w-full truncate rounded border px-1.5 py-0.5 text-left text-[11px] font-medium cursor-pointer",
+                            CATEGORY_COLORS[p.category[0]] ??
+                              "bg-muted text-foreground border-border",
+                          )}
+                        >
+                          {p.startTime} {p.name}
+                        </button>
+                      ))}
+                      {dayProgrammes.length > 3 && (
+                        <div className="text-[11px] text-muted-foreground">
+                          +{dayProgrammes.length - 3} more
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    {dayProgrammes.slice(0, 3).map((p) => (
-                      <button
-                        key={p.id}
-                        onClick={() => setSelected(p.id)}
-                        className={cn(
-                          "block w-full truncate rounded border px-1.5 py-0.5 text-left text-[11px] font-medium cursor-pointer",
-                          CATEGORY_COLORS[p.category[0]] ?? "bg-muted text-foreground border-border",
-                        )}
-                      >
-                        {p.startTime} {p.name}
-                      </button>
-                    ))}
-                    {dayProgrammes.length > 3 && (
-                      <div className="text-[11px] text-muted-foreground">
-                        +{dayProgrammes.length - 3} more
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
 

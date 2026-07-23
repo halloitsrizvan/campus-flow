@@ -86,7 +86,7 @@ export default function ProgrammeDetailPage() {
       updateProgramme(programme!.id, {
         status: "union_approved",
         timeline: programme!.timeline.map((t) =>
-          t.label.toLowerCase().includes("union")
+          t.label.toLowerCase() === "union approval"
             ? { ...t, done: true, at: new Date().toISOString() }
             : t,
         ),
@@ -107,11 +107,15 @@ export default function ProgrammeDetailPage() {
       updateProgramme(programme!.id, {
         status: needsMic ? "principal_approved" : "booked",
         timeline: programme!.timeline.map((t) => {
+          const l = t.label.toLowerCase();
           if (
-            t.label.toLowerCase().includes("principal") ||
-            (!needsMic && t.label.toLowerCase() === "booked")
-          )
-            return { ...t, done: true, at: new Date().toISOString() };
+            l === "union approval" ||
+            l.includes("teacher") ||
+            l.includes("principal") ||
+            (!needsMic && l === "booked")
+          ) {
+            return { ...t, done: true, at: t.at || new Date().toISOString() };
+          }
           return t;
         }),
       });
@@ -137,7 +141,8 @@ export default function ProgrammeDetailPage() {
   const canApprove =
     (user.role === "union" && programme.status === "submitted") ||
     (user.role === "teacher" && programme.status === "union_approved") ||
-    (user.role === "principal" && programme.status === "teacher_approved") ||
+    (user.role === "principal" &&
+      ["submitted", "union_approved", "teacher_approved"].includes(programme.status)) ||
     (user.role === "mic_manager" && programme.status === "principal_approved");
 
   function submitReview() {
@@ -156,7 +161,7 @@ export default function ProgrammeDetailPage() {
     <AppShell>
       <title>{`${programme.name} — VenueHub`}</title>
       <meta name="description" content="Programme details, approval timeline and comments." />
-      <div className="mx-auto max-w-5xl space-y-6">
+      <div className={cn("mx-auto max-w-5xl space-y-6", canApprove ? "pb-32 lg:pb-0" : "")}>
         <button
           onClick={() => router.push("/programmes")}
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground cursor-pointer"
@@ -170,6 +175,19 @@ export default function ProgrammeDetailPage() {
           action={
             <div className="flex items-center gap-3">
               <StatusBadge status={programme.status} />
+              {user.role === "union" && programme.status === "booked" && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() =>
+                    updateProgramme(programme.id, {
+                      status: "completed",
+                    })
+                  }
+                >
+                  Mark Completed
+                </Button>
+              )}
               {["wing", "super_admin", "union", "teacher"].includes(user.role) &&
                 (programme.status === "submitted" ||
                   programme.status === "draft" ||
@@ -339,86 +357,116 @@ export default function ProgrammeDetailPage() {
               </div>
             )}
 
-            {user.role === "union" && (programme.status === "booked" || programme.status === "completed") && !programme.review && (
-              <div className="rounded-xl border bg-card p-6 shadow-sm">
-                <h3 className="text-sm font-semibold">Post-Event Review</h3>
-                <div className="mt-4 space-y-4">
-                  <div className="space-y-2">
-                    <Label>Tier</Label>
-                    <Select
-                      value={reviewData.tier}
-                      onValueChange={(v) => setReviewData({ ...reviewData, tier: v })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Tier" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1st Tier">1st Tier</SelectItem>
-                        <SelectItem value="2nd Tier">2nd Tier</SelectItem>
-                        <SelectItem value="Publication">Publication</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Photo Gallery (Image URLs)</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="https://..."
-                        value={newPhoto}
-                        onChange={(e) => setNewPhoto(e.target.value)}
-                      />
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => {
-                          if (newPhoto) {
-                            setReviewData({
-                              ...reviewData,
-                              photoGallery: [...reviewData.photoGallery, newPhoto],
-                            });
-                            setNewPhoto("");
-                          }
-                        }}
+            {user.role === "union" &&
+              (programme.status === "booked" || programme.status === "completed") &&
+              !programme.review && (
+                <div className="rounded-xl border bg-card p-6 shadow-sm">
+                  <h3 className="text-sm font-semibold">Post-Event Review</h3>
+                  <div className="mt-4 space-y-4">
+                    <div className="space-y-2">
+                      <Label>Tier</Label>
+                      <Select
+                        value={reviewData.tier}
+                        onValueChange={(v) => setReviewData({ ...reviewData, tier: v })}
                       >
-                        Add
-                      </Button>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Tier" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1st Tier">1st Tier</SelectItem>
+                          <SelectItem value="2nd Tier">2nd Tier</SelectItem>
+                          <SelectItem value="Publication">Publication</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                    {reviewData.photoGallery.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {reviewData.photoGallery.map((url, i) => (
-                          <div key={i} className="flex items-center gap-1 rounded bg-muted px-2 py-1 text-xs">
-                            <span className="truncate max-w-[150px]">{url}</span>
-                            <button
-                              onClick={() =>
+
+                    <div className="space-y-2">
+                      <Label>Photo Gallery</Label>
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <Input
+                          className="max-w-[250px]"
+                          placeholder="https://... (URL)"
+                          value={newPhoto}
+                          onChange={(e) => setNewPhoto(e.target.value)}
+                        />
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={() => {
+                            if (newPhoto) {
+                              setReviewData({
+                                ...reviewData,
+                                photoGallery: [...reviewData.photoGallery, newPhoto],
+                              });
+                              setNewPhoto("");
+                            }
+                          }}
+                        >
+                          Add URL
+                        </Button>
+                        <span className="text-sm text-muted-foreground px-2">or</span>
+                        <div className="relative inline-block overflow-hidden">
+                          <Button type="button" variant="outline">
+                            Upload Images
+                          </Button>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            className="absolute inset-0 cursor-pointer opacity-0"
+                            onChange={(e) => {
+                              const files = Array.from(e.target.files || []);
+                              if (files.length > 0) {
+                                const urls = files.map((f) => URL.createObjectURL(f));
                                 setReviewData({
                                   ...reviewData,
-                                  photoGallery: reviewData.photoGallery.filter((_, idx) => idx !== i),
-                                })
+                                  photoGallery: [...reviewData.photoGallery, ...urls],
+                                });
                               }
-                            >
-                              <X className="h-3 w-3 hover:text-destructive" />
-                            </button>
-                          </div>
-                        ))}
+                            }}
+                          />
+                        </div>
                       </div>
-                    )}
-                  </div>
+                      {reviewData.photoGallery.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {reviewData.photoGallery.map((url, i) => (
+                            <div
+                              key={i}
+                              className="flex items-center gap-1 rounded bg-muted px-2 py-1 text-xs"
+                            >
+                              <span className="truncate max-w-[150px]">{url}</span>
+                              <button
+                                onClick={() =>
+                                  setReviewData({
+                                    ...reviewData,
+                                    photoGallery: reviewData.photoGallery.filter(
+                                      (_, idx) => idx !== i,
+                                    ),
+                                  })
+                                }
+                              >
+                                <X className="h-3 w-3 hover:text-destructive" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label>Mark</Label>
-                    <Input
-                      placeholder="e.g. A, B, 90/100"
-                      value={reviewData.mark}
-                      onChange={(e) => setReviewData({ ...reviewData, mark: e.target.value })}
-                    />
+                    <div className="space-y-2">
+                      <Label>Mark</Label>
+                      <Input
+                        placeholder="e.g. A, B, 90/100"
+                        value={reviewData.mark}
+                        onChange={(e) => setReviewData({ ...reviewData, mark: e.target.value })}
+                      />
+                    </div>
                   </div>
+                  <Button className="mt-6" size="sm" onClick={submitReview}>
+                    Submit Review
+                  </Button>
                 </div>
-                <Button className="mt-6" size="sm" onClick={submitReview}>
-                  Submit Review
-                </Button>
-              </div>
-            )}
+              )}
 
             {programme.review && (
               <div className="rounded-xl border bg-card p-6 shadow-sm">
@@ -489,9 +537,9 @@ export default function ProgrammeDetailPage() {
             </div>
 
             {canApprove && (
-              <div className="rounded-xl border bg-card p-6 shadow-sm">
-                <h3 className="text-sm font-semibold">Approval Actions</h3>
-                <p className="mt-1 text-xs text-muted-foreground">
+              <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-xl border-t bg-card p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] lg:static lg:z-auto lg:rounded-xl lg:border lg:p-6 lg:shadow-sm">
+                <h3 className="text-sm font-semibold hidden lg:block">Approval Actions</h3>
+                <p className="mt-1 text-xs text-muted-foreground hidden lg:block">
                   {user.role === "union"
                     ? "Review and approve for union teacher sign-off."
                     : user.role === "teacher"
