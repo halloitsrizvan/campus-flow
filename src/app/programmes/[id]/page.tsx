@@ -311,7 +311,6 @@ export default function ProgrammeDetailPage() {
               </div>
             )}
 
-            {true && (
               <div className="rounded-xl border bg-card p-6 shadow-sm">
                 <h3 className="text-sm font-semibold flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" /> Comments ({programme.comments.length})
@@ -355,8 +354,6 @@ export default function ProgrammeDetailPage() {
                   </div>
                 </div>
               </div>
-            )}
-
             {user.role === "union" &&
               (programme.status === "booked" || programme.status === "completed") &&
               !programme.review && (
