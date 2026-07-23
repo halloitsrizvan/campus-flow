@@ -311,49 +311,49 @@ export default function ProgrammeDetailPage() {
               </div>
             )}
 
-              <div className="rounded-xl border bg-card p-6 shadow-sm">
-                <h3 className="text-sm font-semibold flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4" /> Comments ({programme.comments.length})
-                </h3>
-                <div className="mt-4 space-y-4">
-                  {programme.comments.length === 0 && (
-                    <p className="text-sm text-muted-foreground">No comments yet.</p>
-                  )}
-                  {programme.comments.map((c) => (
-                    <div key={c.id} className="flex gap-3">
-                      <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary text-xs font-semibold">
-                        {c.author
-                          .split(" ")
-                          .map((x) => x[0])
-                          .join("")
-                          .slice(0, 2)}
-                      </div>
-                      <div className="flex-1 rounded-lg border bg-background p-3">
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="text-sm font-medium">{c.author}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {format(new Date(c.at), "MMM d, HH:mm")}
-                          </div>
-                        </div>
-                        <p className="mt-1 text-sm">{c.text}</p>
-                      </div>
+            <div className="rounded-xl border bg-card p-6 shadow-sm">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <MessageSquare className="h-4 w-4" /> Comments ({programme.comments.length})
+              </h3>
+              <div className="mt-4 space-y-4">
+                {programme.comments.length === 0 && (
+                  <p className="text-sm text-muted-foreground">No comments yet.</p>
+                )}
+                {programme.comments.map((c) => (
+                  <div key={c.id} className="flex gap-3">
+                    <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary text-xs font-semibold">
+                      {c.author
+                        .split(" ")
+                        .map((x) => x[0])
+                        .join("")
+                        .slice(0, 2)}
                     </div>
-                  ))}
-                </div>
-                <div className="mt-4 space-y-2">
-                  <Textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Add a comment…"
-                    rows={3}
-                  />
-                  <div className="flex justify-end">
-                    <Button size="sm" onClick={addComment}>
-                      Add comment
-                    </Button>
+                    <div className="flex-1 rounded-lg border bg-background p-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="text-sm font-medium">{c.author}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {format(new Date(c.at), "MMM d, HH:mm")}
+                        </div>
+                      </div>
+                      <p className="mt-1 text-sm">{c.text}</p>
+                    </div>
                   </div>
+                ))}
+              </div>
+              <div className="mt-4 space-y-2">
+                <Textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Add a comment…"
+                  rows={3}
+                />
+                <div className="flex justify-end">
+                  <Button size="sm" onClick={addComment}>
+                    Add comment
+                  </Button>
                 </div>
               </div>
+            </div>
             {user.role === "union" &&
               (programme.status === "booked" || programme.status === "completed") &&
               !programme.review && (

@@ -51,6 +51,8 @@ export interface Programme {
   };
   committeeApproved?: boolean;
   teacherApproved?: boolean;
+  rating?: number;
+  ratingRemarks?: string;
 }
 
 export interface Venue {

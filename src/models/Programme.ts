@@ -45,6 +45,8 @@ export interface IProgramme extends Document {
   };
   committeeApproved?: boolean;
   teacherApproved?: boolean;
+  rating?: number;
+  ratingRemarks?: string;
 }
 
 const CommentSchema = new Schema(
@@ -124,6 +126,8 @@ const ProgrammeSchema: Schema = new Schema(
     review: ReviewSchema,
     committeeApproved: { type: Boolean, default: false },
     teacherApproved: { type: Boolean, default: false },
+    rating: { type: Number },
+    ratingRemarks: { type: String },
   },
   {
     timestamps: true,
