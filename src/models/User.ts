@@ -8,6 +8,7 @@ export interface IUser extends Document {
   role: Role;
   wing?: string;
   union?: string;
+  color?: string;
 }
 
 const UserSchema: Schema = new Schema(
@@ -19,6 +20,7 @@ const UserSchema: Schema = new Schema(
     role: { type: String, required: true },
     wing: { type: String },
     union: { type: String },
+    color: { type: String },
   },
   {
     timestamps: true,

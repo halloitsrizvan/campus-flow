@@ -242,8 +242,19 @@ function UserFormModal({ mode, user }: { mode: "create" | "edit"; user?: User })
     role: user?.role || "wing",
     wing: user?.wing || "",
     union: user?.union || "Lisan",
+    color: user?.color || "bg-primary/15 text-primary border-primary/30",
   });
   const [password, setPassword] = useState("");
+
+  const COLOR_OPTIONS = [
+    { label: "Blue", value: "bg-primary/15 text-primary border-primary/30" },
+    { label: "Cyan", value: "bg-info/15 text-info border-info/30" },
+    { label: "Yellow", value: "bg-warning/15 text-warning border-warning/30" },
+    { label: "Green", value: "bg-success/15 text-success border-success/30" },
+    { label: "Purple", value: "bg-accent text-accent-foreground border-border" },
+    { label: "Red", value: "bg-destructive/15 text-destructive border-destructive/30" },
+    { label: "Gray", value: "bg-muted text-muted-foreground border-muted/30" },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -348,15 +359,38 @@ function UserFormModal({ mode, user }: { mode: "create" | "edit"; user?: User })
             </Select>
           </div>
           {formData.role === "wing" && (
-            <div className="space-y-2">
-              <Label>Wing Name</Label>
-              <Input
-                value={formData.wing}
-                onChange={(e) => setFormData({ ...formData, wing: e.target.value })}
-                placeholder="e.g. Computer Science Wing"
-                required
-              />
-            </div>
+            <>
+              <div className="space-y-2">
+                <Label>Wing Name</Label>
+                <Input
+                  value={formData.wing}
+                  onChange={(e) => setFormData({ ...formData, wing: e.target.value })}
+                  placeholder="e.g. Computer Science Wing"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Wing Color</Label>
+                <Select
+                  value={formData.color}
+                  onValueChange={(val) => setFormData({ ...formData, color: val })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a color" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COLOR_OPTIONS.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        <div className="flex items-center gap-2">
+                          <div className={`h-4 w-4 rounded-full border ${opt.value}`} />
+                          {opt.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
           )}
           {formData.role !== "super_admin" &&
             formData.role !== "principal" &&

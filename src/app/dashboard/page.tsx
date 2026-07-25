@@ -64,18 +64,13 @@ function DashboardContent() {
   const scoped = getScopedProgrammes(programmes, user, users);
 
   const total = scoped.length;
-  const pending = scoped.filter(
-    (p) => p.status === "submitted"
-  ).length;
+  const pending = scoped.filter((p) => p.status === "submitted").length;
   const approved = scoped.filter((p) => p.status === "booked").length;
   const rejected = scoped.filter((p) => p.status === "rejected").length;
   const completed = scoped.filter((p) => p.status === "completed").length;
   const budget = scoped
     .filter((p) => ["booked", "completed"].includes(p.status))
-    .reduce(
-      (a, p) => a + p.budget.reduce((acc, curr) => acc + curr.amount, 0),
-      0,
-    );
+    .reduce((a, p) => a + p.budget.reduce((acc, curr) => acc + curr.amount, 0), 0);
 
   const monthlyData = buildMonthly(scoped);
   const statusData = [

@@ -1,4 +1,5 @@
 "use client";
+// Triggering HMR to resolve CATEGORY_COLORS caching issue
 
 import Link from "next/link";
 import { AppShell, PageHeader } from "@/components/app-shell";
@@ -27,21 +28,22 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 
-const WING_COLORS: Record<string, string> = {
-  "Computer Science Wing": "bg-primary/15 text-primary border-primary/30",
-  "Electronics Wing": "bg-info/15 text-info border-info/30",
-  "Cultural Committee": "bg-warning/15 text-warning border-warning/30",
-  "Sports Committee": "bg-success/15 text-success border-success/30",
-  "Literary Club": "bg-accent text-accent-foreground border-border",
-  "IEEE Chapter": "bg-destructive/15 text-destructive border-destructive/30",
-};
-
 export default function CalendarPage() {
   const programmes = useApp((s) => s.programmes);
   const user = useApp((s) => s.user);
   const users = useApp((s) => s.users);
   const [cursor, setCursor] = useState(new Date());
   const [selected, setSelected] = useState<string | null>(null);
+
+  const wingColors = useMemo(() => {
+    const map: Record<string, string> = {};
+    users
+      .filter((u) => u.role === "wing" && u.wing)
+      .forEach((u) => {
+        map[u.wing!] = u.color || "bg-primary/15 text-primary border-primary/30";
+      });
+    return map;
+  }, [users]);
 
   const scoped = useMemo(() => {
     return getScopedProgrammes(programmes, user, users);
@@ -137,8 +139,7 @@ export default function CalendarPage() {
                           onClick={() => setSelected(p.id)}
                           className={cn(
                             "block w-full truncate rounded border px-1.5 py-0.5 text-left text-[11px] font-medium cursor-pointer",
-                            WING_COLORS[p.wing] ??
-                              "bg-muted text-foreground border-border",
+                            wingColors[p.wing] ?? "bg-muted text-foreground border-border",
                           )}
                         >
                           {p.startTime} {p.name}
@@ -159,7 +160,7 @@ export default function CalendarPage() {
 
         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
           <span>Legend:</span>
-          {Object.entries(WING_COLORS).map(([cat, cls]) => (
+          {Object.entries(wingColors).map(([cat, cls]) => (
             <span
               key={cat}
               className={cn("inline-flex items-center rounded-full border px-2 py-0.5", cls)}

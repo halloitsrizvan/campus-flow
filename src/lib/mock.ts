@@ -11,6 +11,7 @@ export interface User {
   wing?: string;
   union?: string;
   avatar?: string;
+  color?: string;
 }
 
 export type ProgrammeStatus =

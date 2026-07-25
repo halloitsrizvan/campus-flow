@@ -85,9 +85,11 @@ export default function ProgrammeDetailPage() {
     if (user!.role === "union") {
       updateProgramme(programme!.id, {
         status: "booked", // Changed from "union_approved"
-        timeline: programme!.timeline.map((t) =>
-          ({ ...t, done: true, at: t.at || new Date().toISOString() })
-        ),
+        timeline: programme!.timeline.map((t) => ({
+          ...t,
+          done: true,
+          at: t.at || new Date().toISOString(),
+        })),
       });
       toast.success("Approved by Union - Venue Booked");
     } /* else if (user!.role === "teacher") {
@@ -136,12 +138,11 @@ export default function ProgrammeDetailPage() {
     toast.error("Programme rejected");
   }
 
-  const canApprove =
-    (user.role === "union" && programme.status === "submitted");
-    // || (user.role === "teacher" && programme.status === "union_approved")
-    // || (user.role === "principal" &&
-    //   ["submitted", "union_approved", "teacher_approved"].includes(programme.status))
-    // || (user.role === "mic_manager" && programme.status === "principal_approved");
+  const canApprove = user.role === "union" && programme.status === "submitted";
+  // || (user.role === "teacher" && programme.status === "union_approved")
+  // || (user.role === "principal" &&
+  //   ["submitted", "union_approved", "teacher_approved"].includes(programme.status))
+  // || (user.role === "mic_manager" && programme.status === "principal_approved");
 
   function submitReview() {
     if (!reviewData.tier || !reviewData.mark) {
@@ -540,33 +541,40 @@ export default function ProgrammeDetailPage() {
               <h3 className="text-sm font-semibold">Approval Timeline</h3>
               <ol className="mt-4 space-y-4">
                 {programme.timeline
-                  .filter((t) => ["submitted by wing", "union approval", "booked"].includes(t.label.toLowerCase()))
+                  .filter((t) =>
+                    ["submitted by wing", "union approval", "booked"].includes(
+                      t.label.toLowerCase(),
+                    ),
+                  )
                   .map((t, i) => (
-                  <li key={i} className="flex gap-3">
-                    <div
-                      className={cn(
-                        "mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full border text-xs",
-                        t.done
-                          ? "border-success bg-success text-success-foreground"
-                          : "border-border bg-muted text-muted-foreground",
-                      )}
-                    >
-                      {t.done ? <Check className="h-3 w-3" /> : i + 1}
-                    </div>
-                    <div className="min-w-0 flex-1">
+                    <li key={i} className="flex gap-3">
                       <div
-                        className={cn("text-sm", t.done ? "font-medium" : "text-muted-foreground")}
+                        className={cn(
+                          "mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full border text-xs",
+                          t.done
+                            ? "border-success bg-success text-success-foreground"
+                            : "border-border bg-muted text-muted-foreground",
+                        )}
                       >
-                        {t.label}
+                        {t.done ? <Check className="h-3 w-3" /> : i + 1}
                       </div>
-                      {t.at && (
-                        <div className="text-xs text-muted-foreground">
-                          {format(new Date(t.at), "MMM d, yyyy")}
+                      <div className="min-w-0 flex-1">
+                        <div
+                          className={cn(
+                            "text-sm",
+                            t.done ? "font-medium" : "text-muted-foreground",
+                          )}
+                        >
+                          {t.label}
                         </div>
-                      )}
-                    </div>
-                  </li>
-                ))}
+                        {t.at && (
+                          <div className="text-xs text-muted-foreground">
+                            {format(new Date(t.at), "MMM d, yyyy")}
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  ))}
               </ol>
             </div>
 
