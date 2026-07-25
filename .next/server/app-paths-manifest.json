@@ -1,7 +1,11 @@
 {
-  "/reports/page": "app/reports/page.js",
-  "/page": "app/page.js",
+  "/api/venues/route": "app/api/venues/route.js",
+  "/api/users/route": "app/api/users/route.js",
+  "/api/notifications/route": "app/api/notifications/route.js",
+  "/api/programmes/route": "app/api/programmes/route.js",
   "/programmes/[id]/page": "app/programmes/[id]/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/p/[id]/page": "app/p/[id]/page.js"
+  "/page": "app/page.js",
+  "/p/[id]/page": "app/p/[id]/page.js",
+  "/reports/page": "app/reports/page.js",
+  "/dashboard/page": "app/dashboard/page.js"
 }
