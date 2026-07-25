@@ -539,7 +539,9 @@ export default function ProgrammeDetailPage() {
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="text-sm font-semibold">Approval Timeline</h3>
               <ol className="mt-4 space-y-4">
-                {programme.timeline.map((t, i) => (
+                {programme.timeline
+                  .filter((t) => ["submitted by wing", "union approval", "booked"].includes(t.label.toLowerCase()))
+                  .map((t, i) => (
                   <li key={i} className="flex gap-3">
                     <div
                       className={cn(

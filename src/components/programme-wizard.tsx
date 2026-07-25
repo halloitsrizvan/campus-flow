@@ -130,12 +130,12 @@ export function ProgrammeWizard({ initialData }: { initialData?: Programme }) {
           const base = [
             { label: "Submitted by Wing", at: now, done: true },
             { label: "Union Approval", done: false },
-            { label: "Union Teacher Approval", done: false },
-            { label: "Principal Approval", done: false },
+            // { label: "Union Teacher Approval", done: false },
+            // { label: "Principal Approval", done: false },
           ];
-          if (form.equipment.includes("Mic")) {
-            base.push({ label: "Mic Approval", done: false });
-          }
+          // if (form.equipment.includes("Mic")) {
+          //   base.push({ label: "Mic Approval", done: false });
+          // }
           base.push({ label: "Booked", done: false });
           return base;
         })(),
