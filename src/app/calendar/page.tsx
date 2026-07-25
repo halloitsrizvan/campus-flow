@@ -133,18 +133,27 @@ export default function CalendarPage() {
                       {format(day, "d")}
                     </div>
                     <div className="space-y-1">
-                      {dayProgrammes.slice(0, 3).map((p) => (
-                        <button
-                          key={p.id}
-                          onClick={() => setSelected(p.id)}
-                          className={cn(
-                            "block w-full truncate rounded border px-1.5 py-0.5 text-left text-[11px] font-medium cursor-pointer",
-                            wingColors[p.wing] ?? "bg-muted text-foreground border-border",
-                          )}
-                        >
-                          {p.startTime} {p.name}
-                        </button>
-                      ))}
+                      {dayProgrammes.slice(0, 3).map((p) => {
+                        const color = wingColors[p.wing] ?? "bg-muted text-foreground border-border";
+                        const isHex = color.startsWith("#");
+                        return (
+                          <button
+                            key={p.id}
+                            onClick={() => setSelected(p.id)}
+                            className={cn(
+                              "block w-full truncate rounded border px-1.5 py-0.5 text-left text-[11px] font-medium cursor-pointer",
+                              !isHex && color,
+                            )}
+                            style={isHex ? {
+                              backgroundColor: `${color}26`,
+                              color: color,
+                              borderColor: `${color}4D`
+                            } : undefined}
+                          >
+                            {p.startTime} {p.name}
+                          </button>
+                        );
+                      })}
                       {dayProgrammes.length > 3 && (
                         <div className="text-[11px] text-muted-foreground">
                           +{dayProgrammes.length - 3} more
@@ -160,14 +169,22 @@ export default function CalendarPage() {
 
         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
           <span>Legend:</span>
-          {Object.entries(wingColors).map(([cat, cls]) => (
-            <span
-              key={cat}
-              className={cn("inline-flex items-center rounded-full border px-2 py-0.5", cls)}
-            >
-              {cat}
-            </span>
-          ))}
+          {Object.entries(wingColors).map(([cat, cls]) => {
+            const isHex = cls.startsWith("#");
+            return (
+              <span
+                key={cat}
+                className={cn("inline-flex items-center rounded-full border px-2 py-0.5", !isHex && cls)}
+                style={isHex ? {
+                  backgroundColor: `${cls}26`,
+                  color: cls,
+                  borderColor: `${cls}4D`
+                } : undefined}
+              >
+                {cat}
+              </span>
+            );
+          })}
         </div>
 
         <Sheet open={!!programme} onOpenChange={(v) => !v && setSelected(null)}>

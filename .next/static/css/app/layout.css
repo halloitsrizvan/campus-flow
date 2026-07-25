@@ -1599,6 +1599,9 @@
     --tw-gradient-position: to top in oklab;
     background-image: linear-gradient(var(--tw-gradient-stops));
   }
+  .bg-\[conic-gradient\(red\,yellow\,green\,blue\,magenta\,red\)\] {
+    background-image: conic-gradient(red,yellow,green,blue,magenta,red);
+  }
   .bg-\[radial-gradient\(circle_at_20\%_10\%\,oklch\(0\.9_0\.06_277\/_0\.6\)\,transparent_50\%\)\,radial-gradient\(circle_at_85\%_90\%\,oklch\(0\.92_0\.07_165\/_0\.55\)\,transparent_45\%\)\] {
     background-image: radial-gradient(circle at 20% 10%,oklch(0.9 0.06 277/ 0.6),transparent 50%),radial-gradient(circle at 85% 90%,oklch(0.92 0.07 165/ 0.55),transparent 45%);
   }

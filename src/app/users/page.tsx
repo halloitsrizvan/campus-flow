@@ -254,7 +254,11 @@ function UserFormModal({ mode, user }: { mode: "create" | "edit"; user?: User })
     { label: "Purple", value: "bg-accent text-accent-foreground border-border" },
     { label: "Red", value: "bg-destructive/15 text-destructive border-destructive/30" },
     { label: "Gray", value: "bg-muted text-muted-foreground border-muted/30" },
+    { label: "Custom Color", value: "custom" },
   ];
+
+  const isCustomColor = formData.color?.startsWith("#");
+  const colorSelectValue = isCustomColor ? "custom" : formData.color;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -372,8 +376,14 @@ function UserFormModal({ mode, user }: { mode: "create" | "edit"; user?: User })
               <div className="space-y-2">
                 <Label>Wing Color</Label>
                 <Select
-                  value={formData.color}
-                  onValueChange={(val) => setFormData({ ...formData, color: val })}
+                  value={colorSelectValue}
+                  onValueChange={(val) => {
+                    if (val === "custom") {
+                      setFormData({ ...formData, color: "#3b82f6" });
+                    } else {
+                      setFormData({ ...formData, color: val });
+                    }
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a color" />
@@ -382,13 +392,34 @@ function UserFormModal({ mode, user }: { mode: "create" | "edit"; user?: User })
                     {COLOR_OPTIONS.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value}>
                         <div className="flex items-center gap-2">
-                          <div className={`h-4 w-4 rounded-full border ${opt.value}`} />
+                          {opt.value !== "custom" ? (
+                            <div className={`h-4 w-4 rounded-full border ${opt.value}`} />
+                          ) : (
+                            <div className="h-4 w-4 rounded-full border bg-[conic-gradient(red,yellow,green,blue,magenta,red)]" />
+                          )}
                           {opt.label}
                         </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {isCustomColor && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <Input
+                      type="color"
+                      value={formData.color}
+                      onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                      className="w-14 h-10 p-1 cursor-pointer"
+                    />
+                    <Input
+                      type="text"
+                      value={formData.color}
+                      onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                      placeholder="#000000"
+                      className="flex-1 font-mono uppercase"
+                    />
+                  </div>
+                )}
               </div>
             </>
           )}
