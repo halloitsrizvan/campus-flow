@@ -101,9 +101,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         <div className="flex h-16 items-center justify-between border-b px-5">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground font-bold">
-              V
-            </div>
+            <img src="/favicon.ico" alt="VenueHub Logo" className="h-8 w-8 shrink-0 object-contain" />
             <span className="text-lg font-semibold tracking-tight">VenueHub</span>
           </Link>
           <button

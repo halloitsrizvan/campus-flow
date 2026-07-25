@@ -37,9 +37,7 @@ export default function LoginPage() {
         {/* Left: brand panel */}
         <div className="hidden flex-col justify-between lg:flex">
           <div className="flex items-center gap-2">
-            <div className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground font-bold">
-              V
-            </div>
+            <img src="/favicon.ico" alt="VenueHub Logo" className="h-9 w-9 object-contain" />
             <span className="text-lg font-semibold tracking-tight">VenueHub</span>
           </div>
           <div>
@@ -74,9 +72,7 @@ export default function LoginPage() {
         <div className="mx-auto w-full max-w-md">
           <div className="rounded-2xl border bg-card p-6 shadow-lg sm:p-8">
             <div className="lg:hidden mb-6 flex items-center gap-2">
-              <div className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground font-bold">
-                V
-              </div>
+              <img src="/favicon.ico" alt="VenueHub Logo" className="h-9 w-9 object-contain" />
               <span className="text-lg font-semibold tracking-tight">VenueHub</span>
             </div>
             <h2 className="text-xl font-semibold tracking-tight">Welcome back</h2>

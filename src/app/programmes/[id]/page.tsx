@@ -51,7 +51,7 @@ export default function ProgrammeDetailPage() {
     mark: "",
   });
   const [newPhoto, setNewPhoto] = useState("");
-
+  const [isUploadingPhotos, setIsUploadingPhotos] = useState(false);
   if (!user) return null;
   if (!programme) {
     return (
@@ -403,22 +403,52 @@ export default function ProgrammeDetailPage() {
                         </Button>
                         <span className="text-sm text-muted-foreground px-2">or</span>
                         <div className="relative inline-block overflow-hidden">
-                          <Button type="button" variant="outline">
-                            Upload Images
+                          <Button type="button" variant="outline" disabled={isUploadingPhotos}>
+                            {isUploadingPhotos ? "Uploading..." : "Upload Images"}
                           </Button>
                           <input
                             type="file"
                             accept="image/*"
                             multiple
+                            disabled={isUploadingPhotos}
                             className="absolute inset-0 cursor-pointer opacity-0"
-                            onChange={(e) => {
+                            onChange={async (e) => {
                               const files = Array.from(e.target.files || []);
                               if (files.length > 0) {
-                                const urls = files.map((f) => URL.createObjectURL(f));
-                                setReviewData({
-                                  ...reviewData,
-                                  photoGallery: [...reviewData.photoGallery, ...urls],
-                                });
+                                setIsUploadingPhotos(true);
+                                try {
+                                  const uploadedUrls = [];
+                                  for (const file of files) {
+                                    const formData = new FormData();
+                                    formData.append("file", file);
+                                    formData.append("upload_preset", "college_db");
+              
+                                    const res = await fetch(
+                                      "https://api.cloudinary.com/v1_1/dqgspgrul/image/upload",
+                                      {
+                                        method: "POST",
+                                        body: formData,
+                                      }
+                                    );
+              
+                                    if (!res.ok) {
+                                      throw new Error("Failed to upload image");
+                                    }
+                                    const data = await res.json();
+                                    uploadedUrls.push(data.secure_url);
+                                  }
+                                  
+                                  setReviewData((prev) => ({
+                                    ...prev,
+                                    photoGallery: [...prev.photoGallery, ...uploadedUrls],
+                                  }));
+                                  toast.success("Images uploaded successfully");
+                                } catch (error) {
+                                  toast.error("Error uploading images");
+                                  console.error(error);
+                                } finally {
+                                  setIsUploadingPhotos(false);
+                                }
                               }
                             }}
                           />
@@ -478,18 +508,25 @@ export default function ProgrammeDetailPage() {
                     <div className="font-medium">{programme.review.mark}</div>
                   </div>
                   {programme.review.photoGallery.length > 0 && (
-                    <div className="sm:col-span-2">
-                      <div className="text-xs text-muted-foreground">Photo Gallery</div>
-                      <div className="mt-1 flex flex-wrap gap-2">
+                    <div className="sm:col-span-2 mt-4">
+                      <div className="text-xs text-muted-foreground mb-3">Photo Gallery</div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         {programme.review.photoGallery.map((url, i) => (
                           <a
                             key={i}
                             href={url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-500 hover:underline"
+                            className="block rounded-lg overflow-hidden border aspect-[4/3] group relative"
                           >
-                            Image {i + 1}
+                            <img
+                              src={url}
+                              alt={`Gallery Image ${i + 1}`}
+                              className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                              <span className="text-white text-xs font-medium">View Full</span>
+                            </div>
                           </a>
                         ))}
                       </div>
