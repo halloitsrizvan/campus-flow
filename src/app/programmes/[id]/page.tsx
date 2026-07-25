@@ -422,22 +422,22 @@ export default function ProgrammeDetailPage() {
                                     const formData = new FormData();
                                     formData.append("file", file);
                                     formData.append("upload_preset", "college_db");
-              
+
                                     const res = await fetch(
                                       "https://api.cloudinary.com/v1_1/dqgspgrul/image/upload",
                                       {
                                         method: "POST",
                                         body: formData,
-                                      }
+                                      },
                                     );
-              
+
                                     if (!res.ok) {
                                       throw new Error("Failed to upload image");
                                     }
                                     const data = await res.json();
                                     uploadedUrls.push(data.secure_url);
                                   }
-                                  
+
                                   setReviewData((prev) => ({
                                     ...prev,
                                     photoGallery: [...prev.photoGallery, ...uploadedUrls],

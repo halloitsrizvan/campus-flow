@@ -29,11 +29,19 @@ export default function IndexPage() {
         </div>
         <div className="flex items-center gap-4">
           {user ? (
-            <Button asChild variant="outline" className="bg-background/50 backdrop-blur-sm border-white/20 hover:bg-background/80">
+            <Button
+              asChild
+              variant="outline"
+              className="bg-background/50 backdrop-blur-sm border-white/20 hover:bg-background/80"
+            >
               <Link href="/dashboard">Dashboard</Link>
             </Button>
           ) : (
-            <Button asChild variant="outline" className="bg-background/50 backdrop-blur-sm border-white/20 hover:bg-background/80">
+            <Button
+              asChild
+              variant="outline"
+              className="bg-background/50 backdrop-blur-sm border-white/20 hover:bg-background/80"
+            >
               <Link href="/login">Login</Link>
             </Button>
           )}
@@ -59,21 +67,32 @@ export default function IndexPage() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {publicProgrammes.map((p) => (
-              <Link href={`/p/${p.id}`} key={p.id} className="group flex flex-col rounded-2xl border border-white/10 bg-card/40 backdrop-blur-md p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:bg-card/60 hover:border-white/20">
+              <Link
+                href={`/p/${p.id}`}
+                key={p.id}
+                className="group flex flex-col rounded-2xl border border-white/10 bg-card/40 backdrop-blur-md p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:bg-card/60 hover:border-white/20"
+              >
                 <div className="mb-5 flex items-start justify-between gap-4">
                   <div className="space-y-1">
-                    <h3 className="font-semibold leading-tight text-lg transition-colors group-hover:text-primary">{p.name}</h3>
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{p.wing}</p>
+                    <h3 className="font-semibold leading-tight text-lg transition-colors group-hover:text-primary">
+                      {p.name}
+                    </h3>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      {p.wing}
+                    </p>
                   </div>
-                  <Badge variant={p.status === "completed" ? "secondary" : "default"} className="shrink-0 shadow-sm">
+                  <Badge
+                    variant={p.status === "completed" ? "secondary" : "default"}
+                    className="shrink-0 shadow-sm"
+                  >
                     {p.status === "completed" ? "Completed" : "Upcoming"}
                   </Badge>
                 </div>
-                
+
                 <p className="mb-6 text-sm text-muted-foreground line-clamp-3 flex-1 leading-relaxed">
                   {p.purpose || "No description provided."}
                 </p>
-                
+
                 <div className="mt-auto space-y-3 text-sm pt-4 border-t border-border/50">
                   <div className="flex items-center text-muted-foreground group-hover:text-foreground/80 transition-colors">
                     <CalendarDays className="mr-3 h-4 w-4 shrink-0 text-primary/70" />

@@ -3,7 +3,14 @@
 import Link from "next/link";
 import { useApp, venueName } from "@/lib/mock";
 import { format } from "date-fns";
-import { CalendarDays, MapPin, ArrowLeft, Image as ImageIcon, MessageSquare, User as UserIcon } from "lucide-react";
+import {
+  CalendarDays,
+  MapPin,
+  ArrowLeft,
+  Image as ImageIcon,
+  MessageSquare,
+  User as UserIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useParams, useRouter } from "next/navigation";
@@ -15,9 +22,10 @@ import { toast } from "sonner";
 
 export default function PublicProgrammePage() {
   const params = useParams();
-  const id = typeof params.id === "string" ? params.id : Array.isArray(params.id) ? params.id[0] : "";
+  const id =
+    typeof params.id === "string" ? params.id : Array.isArray(params.id) ? params.id[0] : "";
   const router = useRouter();
-  
+
   const programmes = useApp((s) => s.programmes);
   const updateProgramme = useApp((s) => s.updateProgramme);
   const user = useApp((s) => s.user);
@@ -31,7 +39,9 @@ export default function PublicProgrammePage() {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
         <h2 className="text-2xl font-semibold mb-2">Programme not found</h2>
-        <p className="text-muted-foreground mb-6">This programme may have been removed or does not exist.</p>
+        <p className="text-muted-foreground mb-6">
+          This programme may have been removed or does not exist.
+        </p>
         <Button asChild>
           <Link href="/">Back to Home</Link>
         </Button>
@@ -45,7 +55,7 @@ export default function PublicProgrammePage() {
       toast.error("Please provide both name and comment.");
       return;
     }
-    
+
     const newComment = {
       id: `c${Date.now()}`,
       author: commentName.trim(),
@@ -53,7 +63,7 @@ export default function PublicProgrammePage() {
       text: commentText.trim(),
       at: new Date().toISOString(),
     };
-    
+
     updateProgramme(programme!.id, { comments: [...programme!.comments, newComment] });
     setCommentText("");
     toast.success("Comment added!");
@@ -66,17 +76,28 @@ export default function PublicProgrammePage() {
         className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_10%,oklch(0.9_0.06_277/_0.6),transparent_50%),radial-gradient(circle_at_85%_90%,oklch(0.92_0.07_165/_0.55),transparent_45%)]"
       />
       <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-white/10 bg-background/40 px-6 backdrop-blur-md shadow-sm">
-        <div className="flex items-center gap-2 cursor-pointer transition-opacity hover:opacity-80" onClick={() => router.push("/")}>
+        <div
+          className="flex items-center gap-2 cursor-pointer transition-opacity hover:opacity-80"
+          onClick={() => router.push("/")}
+        >
           <img src="/favicon.ico" alt="VenueHub Logo" className="h-8 w-8 object-contain" />
           <span className="text-lg font-semibold tracking-tight">VenueHub</span>
         </div>
         <div className="flex items-center gap-4">
           {user ? (
-            <Button asChild variant="outline" className="bg-background/50 backdrop-blur-sm border-white/20 hover:bg-background/80">
+            <Button
+              asChild
+              variant="outline"
+              className="bg-background/50 backdrop-blur-sm border-white/20 hover:bg-background/80"
+            >
               <Link href="/dashboard">Dashboard</Link>
             </Button>
           ) : (
-            <Button asChild variant="outline" className="bg-background/50 backdrop-blur-sm border-white/20 hover:bg-background/80">
+            <Button
+              asChild
+              variant="outline"
+              className="bg-background/50 backdrop-blur-sm border-white/20 hover:bg-background/80"
+            >
               <Link href="/login">Login</Link>
             </Button>
           )}
@@ -84,7 +105,11 @@ export default function PublicProgrammePage() {
       </header>
 
       <main className="relative mx-auto max-w-5xl px-6 py-12">
-        <Button variant="ghost" asChild className="mb-8 -ml-4 text-muted-foreground hover:bg-white/5 hover:text-foreground">
+        <Button
+          variant="ghost"
+          asChild
+          className="mb-8 -ml-4 text-muted-foreground hover:bg-white/5 hover:text-foreground"
+        >
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
           </Link>
@@ -95,18 +120,28 @@ export default function PublicProgrammePage() {
           <div>
             <div className="flex flex-col sm:flex-row sm:items-start gap-4 justify-between mb-6">
               <div>
-                <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent pb-1">{programme.name}</h1>
-                <p className="mt-3 text-lg font-medium text-primary uppercase tracking-widest text-sm">{programme.wing}</p>
+                <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent pb-1">
+                  {programme.name}
+                </h1>
+                <p className="mt-3 text-lg font-medium text-primary uppercase tracking-widest text-sm">
+                  {programme.wing}
+                </p>
               </div>
-              <Badge variant={programme.status === "completed" ? "secondary" : "default"} className="text-sm px-4 py-1.5 shadow-sm self-start">
+              <Badge
+                variant={programme.status === "completed" ? "secondary" : "default"}
+                className="text-sm px-4 py-1.5 shadow-sm self-start"
+              >
                 {programme.status === "completed" ? "Completed" : "Upcoming"}
               </Badge>
             </div>
-            
+
             <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
               <div className="flex items-center gap-2 bg-card/40 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full text-sm shadow-sm transition-colors hover:bg-card/60 hover:text-foreground">
                 <CalendarDays className="h-4 w-4 text-primary/80" />
-                <span className="font-medium">{format(new Date(programme.date), "PPP")} • {programme.startTime} - {programme.endTime}</span>
+                <span className="font-medium">
+                  {format(new Date(programme.date), "PPP")} • {programme.startTime} -{" "}
+                  {programme.endTime}
+                </span>
               </div>
               <div className="flex items-center gap-2 bg-card/40 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full text-sm shadow-sm transition-colors hover:bg-card/60 hover:text-foreground">
                 <MapPin className="h-4 w-4 text-primary/80" />
@@ -128,7 +163,8 @@ export default function PublicProgrammePage() {
               )}
 
               {/* Photo Gallery & Poster */}
-              {(programme.poster?.url || (programme.review?.photoGallery && programme.review.photoGallery.length > 0)) && (
+              {(programme.poster?.url ||
+                (programme.review?.photoGallery && programme.review.photoGallery.length > 0)) && (
                 <section className="rounded-3xl border border-white/10 bg-card/40 backdrop-blur-md p-8 shadow-sm">
                   <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                     <ImageIcon className="h-6 w-6 text-primary/80" /> Media Gallery
@@ -137,9 +173,9 @@ export default function PublicProgrammePage() {
                     {programme.poster?.url && (
                       <div className="space-y-3 group">
                         <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-card shadow-sm relative">
-                          <img 
-                            src={programme.poster.url} 
-                            alt="Event Poster" 
+                          <img
+                            src={programme.poster.url}
+                            alt="Event Poster"
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
@@ -151,9 +187,9 @@ export default function PublicProgrammePage() {
                     {programme.review?.photoGallery.map((url, i) => (
                       <div key={i} className="space-y-3 group">
                         <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-card shadow-sm relative">
-                          <img 
-                            src={url} 
-                            alt={`Gallery image ${i + 1}`} 
+                          <img
+                            src={url}
+                            alt={`Gallery image ${i + 1}`}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
@@ -180,7 +216,9 @@ export default function PublicProgrammePage() {
                         </div>
                         <div>
                           <p className="text-sm font-semibold leading-none">{g.name}</p>
-                          <p className="text-xs font-medium text-muted-foreground mt-1.5 uppercase tracking-wide">{g.position}</p>
+                          <p className="text-xs font-medium text-muted-foreground mt-1.5 uppercase tracking-wide">
+                            {g.position}
+                          </p>
                         </div>
                       </li>
                     ))}
@@ -193,7 +231,13 @@ export default function PublicProgrammePage() {
                   <h3 className="font-bold text-lg mb-4">Categories</h3>
                   <div className="flex flex-wrap gap-2">
                     {programme.category.map((c, i) => (
-                      <Badge key={i} variant="outline" className="bg-background/50 border-white/10 backdrop-blur-sm px-3 py-1">{c}</Badge>
+                      <Badge
+                        key={i}
+                        variant="outline"
+                        className="bg-background/50 border-white/10 backdrop-blur-sm px-3 py-1"
+                      >
+                        {c}
+                      </Badge>
                     ))}
                   </div>
                 </div>
@@ -206,18 +250,23 @@ export default function PublicProgrammePage() {
             <h2 className="text-3xl font-bold mb-8 flex items-center gap-3">
               <MessageSquare className="h-7 w-7 text-primary/80" /> Conversation
             </h2>
-            
+
             <div className="grid gap-8 md:grid-cols-5">
               <div className="md:col-span-3 space-y-6">
                 {programme.comments.length === 0 ? (
                   <div className="text-center py-12 bg-card/20 backdrop-blur-sm rounded-3xl border border-white/10 border-dashed">
                     <MessageSquare className="mx-auto h-10 w-10 text-muted-foreground/30 mb-4" />
-                    <p className="text-muted-foreground text-sm font-medium">No comments yet. Be the first to share your thoughts!</p>
+                    <p className="text-muted-foreground text-sm font-medium">
+                      No comments yet. Be the first to share your thoughts!
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-5">
                     {programme.comments.map((c) => (
-                      <div key={c.id} className="flex gap-4 p-5 rounded-3xl border border-white/10 bg-card/40 backdrop-blur-md shadow-sm transition-all duration-300 hover:shadow-md hover:bg-card/60 hover:-translate-y-0.5">
+                      <div
+                        key={c.id}
+                        className="flex gap-4 p-5 rounded-3xl border border-white/10 bg-card/40 backdrop-blur-md shadow-sm transition-all duration-300 hover:shadow-md hover:bg-card/60 hover:-translate-y-0.5"
+                      >
                         <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary/20 text-primary text-sm font-bold uppercase tracking-wider">
                           {c.author.slice(0, 2)}
                         </div>
@@ -229,11 +278,16 @@ export default function PublicProgrammePage() {
                             </span>
                           </div>
                           {c.role && c.role !== "Public Guest" && (
-                            <Badge variant="secondary" className="mb-3 text-[10px] px-2 py-0.5 bg-primary/10 text-primary font-semibold border-none">
+                            <Badge
+                              variant="secondary"
+                              className="mb-3 text-[10px] px-2 py-0.5 bg-primary/10 text-primary font-semibold border-none"
+                            >
                               {c.role}
                             </Badge>
                           )}
-                          <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap break-words mt-1">{c.text}</p>
+                          <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap break-words mt-1">
+                            {c.text}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -242,33 +296,54 @@ export default function PublicProgrammePage() {
               </div>
 
               <div className="md:col-span-2">
-                <form onSubmit={addComment} className="rounded-3xl border border-white/10 bg-card/50 backdrop-blur-xl p-6 shadow-xl sticky top-24">
+                <form
+                  onSubmit={addComment}
+                  className="rounded-3xl border border-white/10 bg-card/50 backdrop-blur-xl p-6 shadow-xl sticky top-24"
+                >
                   <h3 className="font-bold text-xl mb-5">Leave a comment</h3>
                   <div className="space-y-5">
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Name</Label>
-                      <Input 
+                      <Label
+                        htmlFor="name"
+                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
+                      >
+                        Name
+                      </Label>
+                      <Input
                         id="name"
-                        value={commentName} 
-                        onChange={(e) => setCommentName(e.target.value)} 
+                        value={commentName}
+                        onChange={(e) => setCommentName(e.target.value)}
                         placeholder="Your name"
                         disabled={!!user}
                         className="bg-background/50 border-white/10 focus-visible:ring-primary/50"
                       />
-                      {user && <p className="text-xs text-muted-foreground">Posting as <span className="font-medium text-foreground">{user.name}</span></p>}
+                      {user && (
+                        <p className="text-xs text-muted-foreground">
+                          Posting as{" "}
+                          <span className="font-medium text-foreground">{user.name}</span>
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="comment" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Comment</Label>
-                      <Textarea 
+                      <Label
+                        htmlFor="comment"
+                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
+                      >
+                        Comment
+                      </Label>
+                      <Textarea
                         id="comment"
-                        value={commentText} 
-                        onChange={(e) => setCommentText(e.target.value)} 
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
                         placeholder="What do you think about this event?"
                         rows={5}
                         className="bg-background/50 border-white/10 focus-visible:ring-primary/50 resize-none"
                       />
                     </div>
-                    <Button type="submit" className="w-full font-bold tracking-wide shadow-md hover:shadow-lg transition-all active:scale-[0.98]">
+                    <Button
+                      type="submit"
+                      className="w-full font-bold tracking-wide shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+                    >
                       Post Comment
                     </Button>
                   </div>
