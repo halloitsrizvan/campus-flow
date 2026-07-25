@@ -70,10 +70,12 @@ function DashboardContent() {
   const approved = scoped.filter((p) => p.status === "booked").length;
   const rejected = scoped.filter((p) => p.status === "rejected").length;
   const completed = scoped.filter((p) => p.status === "completed").length;
-  const budget = scoped.reduce(
-    (a, p) => a + p.budget.reduce((acc, curr) => acc + curr.amount, 0),
-    0,
-  );
+  const budget = scoped
+    .filter((p) => ["booked", "completed"].includes(p.status))
+    .reduce(
+      (a, p) => a + p.budget.reduce((acc, curr) => acc + curr.amount, 0),
+      0,
+    );
 
   const monthlyData = buildMonthly(scoped);
   const statusData = [
