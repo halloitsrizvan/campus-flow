@@ -84,15 +84,13 @@ export default function ProgrammeDetailPage() {
   function approve() {
     if (user!.role === "union") {
       updateProgramme(programme!.id, {
-        status: "union_approved",
+        status: "booked", // Changed from "union_approved"
         timeline: programme!.timeline.map((t) =>
-          t.label.toLowerCase() === "union approval"
-            ? { ...t, done: true, at: new Date().toISOString() }
-            : t,
+          ({ ...t, done: true, at: t.at || new Date().toISOString() })
         ),
       });
-      toast.success("Approved by Union");
-    } else if (user!.role === "teacher") {
+      toast.success("Approved by Union - Venue Booked");
+    } /* else if (user!.role === "teacher") {
       updateProgramme(programme!.id, {
         status: "teacher_approved",
         timeline: programme!.timeline.map((t) => {
@@ -130,7 +128,7 @@ export default function ProgrammeDetailPage() {
         }),
       });
       toast.success("Approved by Mic Manager — venue booked");
-    }
+    } */
   }
 
   function reject() {
@@ -139,11 +137,11 @@ export default function ProgrammeDetailPage() {
   }
 
   const canApprove =
-    (user.role === "union" && programme.status === "submitted") ||
-    (user.role === "teacher" && programme.status === "union_approved") ||
-    (user.role === "principal" &&
-      ["submitted", "union_approved", "teacher_approved"].includes(programme.status)) ||
-    (user.role === "mic_manager" && programme.status === "principal_approved");
+    (user.role === "union" && programme.status === "submitted");
+    // || (user.role === "teacher" && programme.status === "union_approved")
+    // || (user.role === "principal" &&
+    //   ["submitted", "union_approved", "teacher_approved"].includes(programme.status))
+    // || (user.role === "mic_manager" && programme.status === "principal_approved");
 
   function submitReview() {
     if (!reviewData.tier || !reviewData.mark) {

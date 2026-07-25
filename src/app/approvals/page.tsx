@@ -28,9 +28,9 @@ export default function ApprovalsPage() {
 
   const pending = scoped.filter((p) => {
     if (user.role === "union") return p.status === "submitted";
-    if (user.role === "teacher") return p.status === "union_approved";
-    if (user.role === "principal") return p.status === "teacher_approved";
-    if (user.role === "mic_manager") return p.status === "principal_approved";
+    // if (user.role === "teacher") return p.status === "union_approved";
+    // if (user.role === "principal") return p.status === "teacher_approved";
+    // if (user.role === "mic_manager") return p.status === "principal_approved";
     return false;
   });
 

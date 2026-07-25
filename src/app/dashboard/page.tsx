@@ -65,9 +65,9 @@ function DashboardContent() {
 
   const total = scoped.length;
   const pending = scoped.filter(
-    (p) => p.status === "submitted" || p.status === "union_approved",
+    (p) => p.status === "submitted"
   ).length;
-  const approved = scoped.filter((p) => p.status === "teacher_approved").length;
+  const approved = scoped.filter((p) => p.status === "booked").length;
   const rejected = scoped.filter((p) => p.status === "rejected").length;
   const completed = scoped.filter((p) => p.status === "completed").length;
   const budget = scoped.reduce(

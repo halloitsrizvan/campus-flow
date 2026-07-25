@@ -13,7 +13,7 @@ export default function IndexPage() {
 
   // Only show approved and completed programmes for public visibility
   const publicProgrammes = programmes
-    .filter((p) => p.status === "teacher_approved" || p.status === "completed")
+    .filter((p) => p.status === "booked" || p.status === "completed")
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (

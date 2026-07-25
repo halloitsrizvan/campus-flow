@@ -1,8 +1,1 @@
-{
-  "/programmes/[id]/page": "app/programmes/[id]/page.js",
-  "/login/page": "app/login/page.js",
-  "/users/page": "app/users/page.js",
-  "/page": "app/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/p/[id]/page": "app/p/[id]/page.js"
-}
+{}

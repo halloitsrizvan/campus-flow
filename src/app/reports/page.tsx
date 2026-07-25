@@ -50,12 +50,12 @@ export default function ReportsPage() {
   const budgetData = Object.entries(budgetByCat).map(([name, budget]) => ({ name, budget }));
 
   const approvalStats = [
-    { label: "Booked", value: scoped.filter((p) => p.status === "teacher_approved").length },
+    { label: "Booked", value: scoped.filter((p) => p.status === "booked").length },
     { label: "Rejected", value: scoped.filter((p) => p.status === "rejected").length },
     { label: "Completed", value: scoped.filter((p) => p.status === "completed").length },
     {
       label: "Pending",
-      value: scoped.filter((p) => ["submitted", "union_approved"].includes(p.status)).length,
+      value: scoped.filter((p) => ["submitted"].includes(p.status)).length,
     },
   ];
 
