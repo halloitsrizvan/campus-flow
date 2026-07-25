@@ -52,7 +52,6 @@ const NAV: NavItem[] = [
     roles: ["union", "teacher", "principal", "mic_manager"],
   },
   { to: "/calendar", label: "Venue Calendar", icon: CalendarDays },
-  { to: "/venues", label: "Venues", icon: Building2, roles: ["union"] },
   { to: "/users", label: "Manage Users", icon: Users, roles: ["super_admin"] },
   { to: "/reports", label: "Reports", icon: BarChart3, roles: ["union", "teacher", "super_admin"] },
   { to: "/notifications", label: "Notifications", icon: Bell },
