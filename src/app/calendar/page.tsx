@@ -27,14 +27,13 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 
-const CATEGORY_COLORS: Record<string, string> = {
-  Technical: "bg-primary/15 text-primary border-primary/30",
-  Cultural: "bg-warning/15 text-warning border-warning/30",
-  Sports: "bg-success/15 text-success border-success/30",
-  Academic: "bg-info/15 text-info border-info/30",
-  Workshop: "bg-accent text-accent-foreground border-border",
-  Seminar: "bg-info/15 text-info border-info/30",
-  Competition: "bg-destructive/15 text-destructive border-destructive/30",
+const WING_COLORS: Record<string, string> = {
+  "Computer Science Wing": "bg-primary/15 text-primary border-primary/30",
+  "Electronics Wing": "bg-info/15 text-info border-info/30",
+  "Cultural Committee": "bg-warning/15 text-warning border-warning/30",
+  "Sports Committee": "bg-success/15 text-success border-success/30",
+  "Literary Club": "bg-accent text-accent-foreground border-border",
+  "IEEE Chapter": "bg-destructive/15 text-destructive border-destructive/30",
 };
 
 export default function CalendarPage() {
@@ -69,7 +68,7 @@ export default function CalendarPage() {
       <div className="space-y-6">
         <PageHeader
           title="Venue Calendar"
-          description="Colour-coded bookings by category. Click an event for details."
+          description="Colour-coded bookings by wing. Click an event for details."
           action={
             <div className="flex items-center gap-2">
               <Button
@@ -138,7 +137,7 @@ export default function CalendarPage() {
                           onClick={() => setSelected(p.id)}
                           className={cn(
                             "block w-full truncate rounded border px-1.5 py-0.5 text-left text-[11px] font-medium cursor-pointer",
-                            CATEGORY_COLORS[p.category[0]] ??
+                            WING_COLORS[p.wing] ??
                               "bg-muted text-foreground border-border",
                           )}
                         >
@@ -160,7 +159,7 @@ export default function CalendarPage() {
 
         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
           <span>Legend:</span>
-          {Object.entries(CATEGORY_COLORS).map(([cat, cls]) => (
+          {Object.entries(WING_COLORS).map(([cat, cls]) => (
             <span
               key={cat}
               className={cn("inline-flex items-center rounded-full border px-2 py-0.5", cls)}
