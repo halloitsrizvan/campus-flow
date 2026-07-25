@@ -22,6 +22,7 @@ import { useApp, type Role } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,6 +67,15 @@ export function AppShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading for skeleton effect
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 600);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!user) router.push("/login");
@@ -276,7 +286,31 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="p-4 lg:p-8">{children}</main>
+        <main className="p-4 lg:p-8">
+          {isLoading ? <GenericSkeleton /> : children}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+function GenericSkeleton() {
+  return (
+    <div className="space-y-6 animate-pulse">
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-[200px] sm:w-[250px]" />
+          <Skeleton className="h-4 w-[250px] sm:w-[350px]" />
+        </div>
+        <Skeleton className="hidden sm:block h-10 w-[120px]" />
+      </div>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <Skeleton key={i} className="h-[120px] rounded-xl" />
+        ))}
+      </div>
+      <div className="space-y-4">
+        <Skeleton className="h-[400px] w-full rounded-xl" />
       </div>
     </div>
   );
