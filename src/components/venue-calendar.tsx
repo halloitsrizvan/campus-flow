@@ -88,11 +88,11 @@ export function VenueCalendar({ className }: { className?: string }) {
         </div>
       </div>
 
-      <div className="rounded-xl border bg-card shadow-sm overflow-x-auto">
+      <div className="rounded-lg border-2 border-black bg-white shadow-brutal overflow-x-auto">
         <div className="min-w-[700px]">
-          <div className="grid grid-cols-7 border-b bg-muted/40 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <div className="grid grid-cols-7 border-b-2 border-black bg-secondary text-xs font-bold uppercase tracking-widest text-black">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-              <div key={d} className="p-3 text-center">
+              <div key={d} className="p-3 text-center border-r-2 border-black last:border-r-0">
                 {d}
               </div>
             ))}
@@ -111,8 +111,8 @@ export function VenueCalendar({ className }: { className?: string }) {
                 <div
                   key={i}
                   className={cn(
-                    "min-h-28 border-b border-r p-2 text-left align-top",
-                    !inMonth && "bg-muted/20 text-muted-foreground",
+                    "min-h-28 border-b-2 border-r-2 border-black p-2 text-left align-top",
+                    !inMonth && "bg-muted text-muted-foreground",
                   )}
                 >
                   <div
@@ -170,7 +170,7 @@ export function VenueCalendar({ className }: { className?: string }) {
             <span
               key={cat}
               className={cn(
-                "inline-flex items-center rounded-full border px-2 py-0.5",
+                "inline-flex items-center rounded-sm border-2 border-black px-2 py-0.5 shadow-brutal-sm font-bold text-black",
                 !isHex && cls,
               )}
               style={

@@ -48,28 +48,33 @@ export default function IndexPage() {
   }, [nextEvent]);
 
   return (
-    <div className="min-h-screen bg-[#15151e] text-white selection:bg-[#c8ff2e] selection:text-black font-sans pb-24">
+    <div className="min-h-screen bg-[#FAFAFA] text-black selection:bg-primary selection:text-black font-sans pb-24 relative overflow-hidden">
+      {/* Brutalist Grid Background */}
+      <div className="absolute inset-0 z-0 opacity-10 pointer-events-none" 
+        style={{ backgroundImage: "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)", backgroundSize: "40px 40px" }}>
+      </div>
+
       {/* Navbar */}
-      <header className="sticky top-0 z-50 flex h-20 items-center justify-between px-6 lg:px-12 backdrop-blur-xl border-b border-white/5 bg-[#15151e]/80">
+      <header className="sticky top-0 z-50 flex h-20 items-center justify-between px-6 lg:px-12 bg-white border-b-4 border-black">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 bg-[#c8ff2e] rounded text-black flex items-center justify-center font-bold text-xl">
+          <div className="h-10 w-10 bg-primary border-2 border-black rounded-sm shadow-brutal-sm text-black flex items-center justify-center font-black text-xl">
             V
           </div>
-          <span className="text-xl font-bold tracking-tight text-white uppercase">
-            Venue<span className="text-[#c8ff2e]">Hub</span>
+          <span className="text-xl font-black tracking-tight text-black uppercase">
+            Venue<span className="text-primary stroke-black">Hub</span>
           </span>
         </div>
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70 uppercase tracking-widest">
-          <Link href="#" className="text-white hover:text-[#c8ff2e] transition-colors">
+        <nav className="hidden md:flex items-center gap-8 text-sm font-black text-black uppercase tracking-widest">
+          <Link href="#" className="hover:-translate-y-1 transition-transform border-b-2 border-transparent hover:border-black">
             Home
           </Link>
-          <Link href="#events" className="hover:text-[#c8ff2e] transition-colors">
+          <Link href="#events" className="hover:-translate-y-1 transition-transform border-b-2 border-transparent hover:border-black">
             Events
           </Link>
-          <Link href="#schedule" className="hover:text-[#c8ff2e] transition-colors">
+          <Link href="#schedule" className="hover:-translate-y-1 transition-transform border-b-2 border-transparent hover:border-black">
             Schedule
           </Link>
-          <Link href="#venues" className="hover:text-[#c8ff2e] transition-colors">
+          <Link href="#venues" className="hover:-translate-y-1 transition-transform border-b-2 border-transparent hover:border-black">
             Venue
           </Link>
         </nav>
@@ -77,14 +82,14 @@ export default function IndexPage() {
           {user ? (
             <Link
               href="/dashboard"
-              className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-all font-semibold flex items-center gap-2 text-sm"
+              className="px-6 py-2.5 rounded-lg border-2 border-black shadow-brutal bg-white hover:bg-muted font-bold flex items-center gap-2 text-sm uppercase tracking-widest hover-brutal"
             >
               Dashboard
             </Link>
           ) : (
             <Link
               href="/login"
-              className="px-6 py-2.5 rounded-full bg-[#7a52f4] hover:bg-[#6841da] transition-all text-white font-semibold flex items-center gap-2 text-sm"
+              className="px-6 py-2.5 rounded-lg border-2 border-black shadow-brutal bg-secondary hover:bg-secondary/90 text-black font-bold flex items-center gap-2 text-sm uppercase tracking-widest hover-brutal"
             >
               Login
             </Link>
@@ -92,93 +97,85 @@ export default function IndexPage() {
         </div>
       </header>
 
-      <main className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-16">
+      <main className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-16 relative z-10">
         {/* HERO SECTION */}
-        <section className="text-center mb-24">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.9] mb-12">
+        <section className="text-center mb-24 mt-12 relative">
+          <div className="absolute top-10 left-10 hidden lg:block w-32 h-32 bg-accent rounded-full border-4 border-black shadow-brutal mix-blend-multiply" />
+          <div className="absolute bottom-10 right-20 hidden lg:block w-24 h-24 bg-primary border-4 border-black shadow-brutal rotate-12" />
+          
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.9] mb-12 drop-shadow-md">
             Book{" "}
-            <span className="inline-flex items-center justify-center bg-[#7a52f4] w-[0.8em] h-[0.8em] rounded-2xl mx-2 align-middle -rotate-12">
-              <CalendarDays className="w-1/2 h-1/2 text-white" />
+            <span className="inline-flex items-center justify-center bg-secondary border-4 border-black shadow-brutal w-[0.8em] h-[0.8em] rounded-sm mx-2 align-middle -rotate-12">
+              <CalendarDays className="w-1/2 h-1/2 text-black" strokeWidth={3} />
             </span>{" "}
             And Explore
             <br />
             Upcoming{" "}
-            <ArrowRight className="inline-block text-[#c8ff2e] w-[0.8em] h-[0.8em] -rotate-45" />{" "}
+            <ArrowRight className="inline-block text-primary stroke-black stroke-2 w-[0.8em] h-[0.8em] -rotate-45" />{" "}
             Events
           </h1>
 
           <div className="grid md:grid-cols-12 gap-6 mt-16 max-w-5xl mx-auto">
             {/* Left Sponsor Card */}
-            <div className="md:col-span-5 bg-white/5 border border-white/10 rounded-3xl p-8 flex flex-col justify-between items-start text-left relative overflow-hidden group">
-              <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-[#c8ff2e] rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity" />
+            <div className="md:col-span-5 bg-white border-4 border-black shadow-brutal rounded-none p-8 flex flex-col justify-between items-start text-left relative overflow-hidden group hover-brutal">
               <div>
-                <h3 className="text-[#c8ff2e] font-bold text-sm uppercase tracking-widest mb-6">
+                <h3 className="bg-black text-white inline-block px-3 py-1 font-black text-sm uppercase tracking-widest mb-6 border-2 border-black">
                   Featured By
                 </h3>
-                <div className="space-y-4 text-white/40 font-bold text-xl uppercase">
-                  <p className="hover:text-white transition-colors cursor-pointer">Campus Flow</p>
-                  <p className="hover:text-white transition-colors cursor-pointer">Student Union</p>
-                  <p className="hover:text-white transition-colors cursor-pointer">Lisan</p>
+                <div className="space-y-4 text-black font-black text-xl uppercase">
+                  <p className="hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2"><ArrowRight className="w-5 h-5"/> Campus Flow</p>
+                  <p className="hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2"><ArrowRight className="w-5 h-5"/> Student Union</p>
+                  <p className="hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2"><ArrowRight className="w-5 h-5"/> Lisan</p>
                 </div>
               </div>
-              <div className="mt-8 flex items-center justify-center w-24 h-24 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMTAgNTBBMDAgNDAgMCAxIDEgOTAgNTBBMDAgNDAgMCAxIDEgMTAgNTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0M4RkYyRSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtZGFzaGFycmF5PSI1LDUiIC8+PC9zdmc+')] bg-contain bg-no-repeat bg-center animate-[spin_10s_linear_infinite]">
-                <div className="w-12 h-12 bg-[#c8ff2e] rounded-full flex items-center justify-center text-black shadow-[0_0_20px_rgba(200,255,46,0.5)]">
+              <div className="mt-8 flex items-center justify-center w-24 h-24 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMTAgNTBBMDAgNDAgMCAxIDEgOTAgNTBBMDAgNDAgMCAxIDEgMTAgNTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtZGFzaGFycmF5PSI1LDUiIC8+PC9zdmc+')] bg-contain bg-no-repeat bg-center animate-[spin_10s_linear_infinite]">
+                <div className="w-12 h-12 bg-primary border-2 border-black rounded-full flex items-center justify-center text-black">
                   <Play className="w-5 h-5 ml-1 fill-current" />
                 </div>
               </div>
             </div>
 
             {/* Right Countdown Card */}
-            <div className="md:col-span-7 bg-[#21212e] border border-white/10 rounded-3xl p-8 flex flex-col justify-between items-start text-left">
-              <p className="text-lg text-white/70 mb-8 max-w-sm leading-relaxed">
+            <div className="md:col-span-7 bg-white border-4 border-black shadow-brutal rounded-none p-8 flex flex-col justify-between items-start text-left hover-brutal">
+              <p className="text-xl text-black font-bold mb-8 max-w-sm leading-relaxed border-l-4 border-primary pl-4">
                 Welcome to VenueHub, the ultimate destination for discovering and booking upcoming
                 events across campus.
               </p>
 
               <div className="flex items-end gap-8 mb-10 w-full justify-between">
-                <div className="flex gap-6 text-center">
-                  <div>
+                <div className="flex gap-4 text-center">
+                  <div className="bg-muted border-2 border-black p-3 min-w-[80px]">
                     <div className="text-4xl md:text-5xl font-black">
                       {String(timeLeft.hours).padStart(2, "0")}
                     </div>
-                    <div className="text-xs font-bold text-white/50 uppercase tracking-widest mt-1">
+                    <div className="text-[10px] font-black text-black uppercase tracking-widest mt-1">
                       Hours
                     </div>
                   </div>
-                  <div>
+                  <div className="bg-muted border-2 border-black p-3 min-w-[80px]">
                     <div className="text-4xl md:text-5xl font-black">
                       {String(timeLeft.minutes).padStart(2, "0")}
                     </div>
-                    <div className="text-xs font-bold text-white/50 uppercase tracking-widest mt-1">
+                    <div className="text-[10px] font-black text-black uppercase tracking-widest mt-1">
                       Minute
                     </div>
                   </div>
-                  <div>
+                  <div className="bg-muted border-2 border-black p-3 min-w-[80px]">
                     <div className="text-4xl md:text-5xl font-black">
                       {String(timeLeft.seconds).padStart(2, "0")}
                     </div>
-                    <div className="text-xs font-bold text-white/50 uppercase tracking-widest mt-1">
+                    <div className="text-[10px] font-black text-black uppercase tracking-widest mt-1">
                       Second
                     </div>
                   </div>
                 </div>
-                <div className="hidden sm:block text-right">
-                  <div className="w-16 h-16 bg-white/10 rounded-xl p-2 inline-block mb-2">
-                    <svg viewBox="0 0 24 24" className="w-full h-full fill-white/80">
-                      <path d="M3 3h8v8H3zm2 2v4h4V5zM13 3h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zM13 13h2v2h-2zm2 2h2v2h-2zm-2 2h2v2h-2zm2 2h2v2h-2zm2-4h2v2h-2zm2-2h2v2h-2zm0 4h2v2h-2z" />
-                    </svg>
-                  </div>
-                  <div className="text-[10px] font-bold text-[#c8ff2e] uppercase tracking-widest">
-                    Get Yours
-                  </div>
-                </div>
               </div>
 
-              <div className="w-full flex">
-                <button className="flex-1 bg-[#c8ff2e] text-black font-black uppercase tracking-wider py-4 rounded-l-2xl text-sm sm:text-base hover:bg-[#b0e620] transition-colors">
+              <div className="w-full flex border-2 border-black shadow-brutal-sm">
+                <button className="flex-1 bg-primary text-black font-black uppercase tracking-wider py-4 text-sm sm:text-base hover:bg-primary/80 transition-colors">
                   {nextEvent ? `Next: ${nextEvent.name}` : "Book Your Seat"}
                 </button>
-                <button className="bg-[#7a52f4] px-6 rounded-r-2xl flex items-center justify-center hover:bg-[#6841da] transition-colors">
+                <button className="bg-black px-6 flex items-center justify-center hover:bg-gray-800 transition-colors border-l-2 border-black">
                   <ArrowUpRight className="text-white w-6 h-6" />
                 </button>
               </div>
@@ -192,230 +189,163 @@ export default function IndexPage() {
             <h2 className="text-4xl md:text-5xl font-black uppercase leading-[1.1] mb-6">
               Decide to join
               <br />
-              the event
+              <span className="bg-accent px-2">the event</span>
             </h2>
-            <p className="text-white/60 text-lg leading-relaxed mb-8 max-w-md">
+            <p className="text-black font-semibold text-lg leading-relaxed mb-8 max-w-md">
               Once you have found an event you are interested in, you can view all the details and
               information you need, including the event date, time, location, lineup, speakers, and
               agenda.
             </p>
+            <div className="flex gap-4">
+              <Button size="lg" className="rounded-none bg-black text-white hover:bg-black/80 hover-brutal">
+                View All Events
+              </Button>
+            </div>
+          </div>
+          <div className="md:w-1/2 relative">
+            <div className="absolute inset-0 bg-primary translate-x-4 translate-y-4 border-4 border-black" />
+            <img
+              src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop"
+              alt="Event crowd"
+              className="relative w-full aspect-square object-cover border-4 border-black"
+            />
+          </div>
+        </section>
+
+        {/* VENUE CALENDAR SECTION */}
+        <section id="schedule" className="my-32">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+            <div>
+              <h2 className="text-4xl md:text-5xl font-black uppercase leading-none mb-4">
+                Venue <span className="text-primary stroke-black" style={{WebkitTextStroke: "2px black"}}>Schedule</span>
+              </h2>
+              <p className="text-black font-bold max-w-md">
+                Check venue availability and see what's happening around campus.
+              </p>
+            </div>
             <Link
-              href="#events"
-              className="inline-flex items-center gap-3 bg-[#7a52f4] hover:bg-[#6841da] text-white font-bold uppercase tracking-wider px-8 py-4 rounded-full transition-transform hover:scale-105"
+              href="/calendar"
+              className="inline-flex items-center gap-2 bg-white border-2 border-black px-6 py-3 font-black uppercase tracking-widest text-sm shadow-brutal hover-brutal"
             >
-              Get Ticket <ArrowUpRight className="w-5 h-5" />
+              Full Calendar <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="md:w-1/2 relative flex justify-center">
-            {/* Big Graphic Ticket */}
-            <div className="relative w-72 h-48 rotate-12 transition-transform hover:rotate-6 duration-500">
-              {/* Back shadow ticket */}
-              <div
-                className="absolute inset-0 bg-[#21212e] rounded-3xl -rotate-12 transform origin-center border border-white/5"
-                style={{
-                  clipPath:
-                    "polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 70%, 10% 70%, 10% 30%, 0 30%)",
-                }}
-              />
-              {/* Front ticket */}
-              <div
-                className="absolute inset-0 bg-[#c8ff2e] rounded-3xl shadow-2xl flex items-center"
-                style={{
-                  clipPath:
-                    "polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 70%, 10% 70%, 10% 30%, 0 30%)",
-                }}
-              >
-                <div className="border-l-4 border-dashed border-black/20 h-full ml-[25%]" />
-                <div className="pl-6 font-black text-4xl text-black uppercase tracking-tighter -rotate-90 origin-left translate-y-12 translate-x-4">
-                  Ticket
-                </div>
-              </div>
-            </div>
+          
+          <div className="bg-white border-4 border-black shadow-brutal p-4 md:p-8">
+            <VenueCalendar />
           </div>
         </section>
 
-        {/* DISCOVER UPCOMING EVENTS */}
+        {/* UPCOMING EVENTS GRID */}
         <section id="events" className="my-32">
-          <h2 className="text-3xl md:text-5xl font-black uppercase mb-12">
-            Discover Upcoming Events
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-[#7a52f4] rounded-[2rem] p-10 flex flex-col justify-between overflow-hidden relative group h-80">
-              <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-0 group-hover:opacity-20 transition-opacity duration-700 mix-blend-overlay" />
-              <div className="z-10">
-                <h3 className="text-2xl font-black uppercase tracking-wide mb-4">
-                  Explore The Location
-                </h3>
-                <p className="text-white/80 font-medium leading-relaxed max-w-sm">
-                  Our platform is designed to make it easy for you to find and book events that
-                  match your interests and preferences.
-                </p>
-              </div>
-              <button className="z-10 mt-auto self-start flex items-center gap-4 bg-[#c8ff2e] text-black font-black uppercase tracking-widest px-6 py-3 rounded-full hover:bg-white transition-colors">
-                Explore The Location
-                <span className="bg-[#7a52f4] text-white p-1 rounded-full">
-                  <ArrowUpRight className="w-4 h-4" />
-                </span>
-              </button>
-            </div>
-
-            <div className="bg-[#21212e] rounded-[2rem] p-10 overflow-hidden relative group h-80 border border-white/5">
-              <img
-                src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&q=80"
-                alt="Audience"
-                className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 group-hover:opacity-60 transition-all duration-700"
-              />
-            </div>
-
-            <div className="bg-[#21212e] rounded-[2rem] p-10 overflow-hidden relative group h-80 border border-white/5">
-              <img
-                src="https://images.unsplash.com/photo-1523580494112-071dcb851aa0?auto=format&fit=crop&q=80"
-                alt="Conference"
-                className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 group-hover:opacity-60 transition-all duration-700"
-              />
-            </div>
-
-            <div className="bg-[#c8ff2e] rounded-[2rem] p-10 flex flex-col justify-between h-80">
-              <div className="text-black">
-                <p className="font-bold text-lg leading-snug">
-                  SIMPLE SEARCH FUNCTION, YOU CAN BROWSE THROUGH A RANGE OF EVENTS AND FILTER
-                  RESULTS BY DATE, LOCATION, CATEGORY, AND MORE.
-                </p>
-              </div>
-              <button className="mt-auto self-start flex items-center gap-3 bg-[#7a52f4] hover:bg-[#6841da] text-white font-black uppercase tracking-widest px-8 py-4 rounded-full transition-colors">
-                Explore <ArrowUpRight className="w-5 h-5" />
-              </button>
-            </div>
+          <div className="flex items-center justify-between mb-12 border-b-4 border-black pb-4">
+            <h2 className="text-3xl md:text-4xl font-black uppercase flex items-center gap-4">
+              <span className="w-4 h-4 bg-primary border-2 border-black inline-block animate-pulse"></span>
+              Upcoming Events
+            </h2>
+            <Link
+              href="/events"
+              className="text-sm font-black uppercase tracking-widest hover:underline decoration-4 underline-offset-4"
+            >
+              View All
+            </Link>
           </div>
-        </section>
 
-        {/* VENUE CALENDAR */}
-        <section id="schedule" className="my-32">
-          <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <h2 className="text-3xl md:text-5xl font-black uppercase mb-4">Venue Schedule</h2>
-              <p className="text-white/60 text-lg max-w-xl">
-                Check our master calendar to see what's happening and when venues are booked across
-                the campus.
+          {publicProgrammes.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {publicProgrammes.slice(0, 6).map((programme, i) => {
+                const colors = ["bg-primary", "bg-secondary", "bg-accent", "bg-white", "bg-success", "bg-info"];
+                const bgColor = colors[i % colors.length];
+                return (
+                  <div
+                    key={programme.id}
+                    className={`group ${bgColor} border-4 border-black shadow-brutal flex flex-col hover-brutal`}
+                  >
+                    <div className="aspect-[4/3] border-b-4 border-black relative overflow-hidden bg-white">
+                      <div className="absolute inset-0 flex items-center justify-center font-black text-6xl opacity-10 uppercase text-center rotate-12">
+                        {programme.wing}
+                      </div>
+                      <div className="absolute top-4 left-4 flex gap-2">
+                        <span className="bg-black text-white px-3 py-1 font-black text-xs uppercase border-2 border-black shadow-brutal-sm">
+                          {format(new Date(programme.date), "MMM d")}
+                        </span>
+                        <span className="bg-white text-black px-3 py-1 font-black text-xs uppercase border-2 border-black shadow-brutal-sm">
+                          {programme.startTime}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-6 flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 text-sm font-bold mb-3 border-b-2 border-black/20 pb-2">
+                          <MapPin className="w-4 h-4" />
+                          {venueName(programme.venue)}
+                        </div>
+                        <h3 className="text-2xl font-black uppercase leading-tight mb-2 group-hover:underline decoration-4 underline-offset-4 line-clamp-2">
+                          {programme.name}
+                        </h3>
+                        <p className="text-black/80 font-semibold text-sm mb-6 line-clamp-2">
+                          Organized by {programme.wing}
+                        </p>
+                      </div>
+                      <Button className="w-full bg-black text-white border-2 border-black hover:bg-black/80 font-black uppercase tracking-widest group-hover:shadow-brutal-sm transition-all">
+                        <Ticket className="w-4 h-4 mr-2" /> View Details
+                      </Button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-24 bg-muted border-4 border-black shadow-brutal">
+              <Globe className="w-16 h-16 mx-auto mb-4 opacity-50" />
+              <h3 className="text-2xl font-black uppercase mb-2">No Upcoming Events</h3>
+              <p className="font-bold max-w-md mx-auto">
+                There are currently no scheduled events. Please check back later or login to organize an event.
               </p>
             </div>
-          </div>
-
-          <div className="bg-[#21212e]/50 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6 md:p-10">
-            {/* Render the calendar component here */}
-            {/* The calendar is normally light themed, so we'll wrap it in a div that enforces dark mode aesthetics if necessary, or just rely on its own styling which we'll tweak globally or locally */}
-            <div className="dark">
-              <VenueCalendar className="text-foreground" />
-            </div>
-          </div>
-        </section>
-
-        {/* GET YOUR FIRST TICKET CTA */}
-        <section className="my-32">
-          <div className="bg-[#21212e] rounded-[3rem] p-12 md:p-20 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12 border border-white/10">
-            {/* Background elements */}
-            <div className="absolute -left-20 -top-20 w-64 h-64 bg-[#7a52f4] rounded-full blur-[100px] opacity-30" />
-            <div className="absolute right-0 bottom-0 w-80 h-80 bg-[url('https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-10 mix-blend-luminosity rounded-full translate-x-1/4 translate-y-1/4" />
-
-            <div className="relative z-10 md:w-1/2">
-              <h2 className="text-4xl md:text-6xl font-black uppercase leading-tight mb-8">
-                Get Your
-                <br />
-                First Ticket
-              </h2>
-              <button className="flex items-center gap-3 bg-[#7a52f4] hover:bg-[#6841da] text-white font-bold uppercase tracking-wider px-8 py-4 rounded-full transition-transform hover:scale-105">
-                Get Ticket <ArrowUpRight className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="relative z-10 md:w-1/3 flex flex-col items-center md:items-end text-right">
-              <p className="text-white/60 text-lg mb-12">
-                Our platform is designed to make it easy for you to find and book events that match
-                your interests and preferences.
-              </p>
-
-              <div className="relative w-32 h-32 flex items-center justify-center">
-                <div
-                  className="absolute inset-0 bg-[#c8ff2e] rounded-full animate-spin-slow"
-                  style={{
-                    clipPath:
-                      "polygon(50% 0%, 61% 10%, 75% 6%, 82% 19%, 96% 23%, 95% 38%, 100% 50%, 95% 62%, 96% 77%, 82% 81%, 75% 94%, 61% 90%, 50% 100%, 39% 90%, 25% 94%, 18% 81%, 4% 77%, 5% 62%, 0% 50%, 5% 38%, 4% 23%, 18% 19%, 25% 6%, 39% 10%)",
-                  }}
-                />
-                <div className="w-16 h-16 bg-[#15151e] rounded-full flex items-center justify-center z-10">
-                  <ArrowUpRight className="text-white w-6 h-6" />
-                </div>
-                <svg
-                  viewBox="0 0 100 100"
-                  className="absolute inset-0 w-full h-full animate-[spin_10s_linear_infinite] z-20 scale-[0.85]"
-                >
-                  <path
-                    id="circlePath"
-                    d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
-                    fill="transparent"
-                  />
-                  <text className="text-[14px] font-black uppercase tracking-[0.2em]" fill="black">
-                    <textPath href="#circlePath">Book A Seat • Book A Seat •</textPath>
-                  </text>
-                </svg>
-              </div>
-            </div>
-          </div>
+          )}
         </section>
       </main>
 
-      {/* FOOTER */}
-      <footer className="border-t border-white/10 mt-20 pt-16 pb-8 max-w-[1400px] mx-auto px-6 lg:px-12">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-10 mb-16">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-[#c8ff2e] rounded text-black flex items-center justify-center font-bold text-xl">
-              V
+      {/* Footer */}
+      <footer className="border-t-4 border-black bg-white pt-20 pb-10 mt-20">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+          <div className="grid md:grid-cols-4 gap-12 mb-16">
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-10 w-10 bg-primary border-2 border-black shadow-brutal-sm text-black flex items-center justify-center font-black text-xl">
+                  V
+                </div>
+                <span className="text-2xl font-black tracking-tight uppercase">VenueHub</span>
+              </div>
+              <p className="font-bold max-w-sm">
+                The ultimate campus event management and venue booking system. Making events happen.
+              </p>
             </div>
-            <span className="text-2xl font-black tracking-tight text-white uppercase">
-              Venue<span className="text-[#c8ff2e]">Hub</span>
-            </span>
-          </div>
-
-          <div className="flex-1 max-w-md w-full">
-            <p className="text-sm font-bold uppercase mb-4">Subscribe to our newsletter</p>
-            <div className="flex w-full">
-              <input
-                type="email"
-                placeholder="Enter Your Email"
-                className="flex-1 bg-[#c8ff2e] text-black placeholder:text-black/60 px-6 py-3 rounded-l-full font-bold focus:outline-none"
-              />
-              <button className="bg-[#7a52f4] px-6 rounded-r-full flex items-center justify-center hover:bg-[#6841da] transition-colors">
-                <ArrowUpRight className="text-white w-5 h-5" />
-              </button>
+            <div>
+              <h4 className="font-black uppercase tracking-widest mb-6 border-b-2 border-black inline-block pb-1">Quick Links</h4>
+              <ul className="space-y-4 font-bold">
+                <li><Link href="#" className="hover:translate-x-2 transition-transform inline-block">Home</Link></li>
+                <li><Link href="#events" className="hover:translate-x-2 transition-transform inline-block">Events</Link></li>
+                <li><Link href="#schedule" className="hover:translate-x-2 transition-transform inline-block">Schedule</Link></li>
+                <li><Link href="/login" className="hover:translate-x-2 transition-transform inline-block text-primary stroke-black">Login to Dashboard</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-black uppercase tracking-widest mb-6 border-b-2 border-black inline-block pb-1">Connect</h4>
+              <ul className="space-y-4 font-bold">
+                <li><a href="#" className="hover:translate-x-2 transition-transform inline-block">Twitter</a></li>
+                <li><a href="#" className="hover:translate-x-2 transition-transform inline-block">Instagram</a></li>
+                <li><a href="#" className="hover:translate-x-2 transition-transform inline-block">Contact Support</a></li>
+              </ul>
             </div>
           </div>
-
-          <nav className="flex flex-col gap-3 text-sm font-bold uppercase text-right">
-            <Link href="#" className="hover:text-[#c8ff2e] transition-colors">
-              Home
-            </Link>
-            <Link href="#events" className="hover:text-[#c8ff2e] transition-colors">
-              Events
-            </Link>
-            <Link href="#schedule" className="hover:text-[#c8ff2e] transition-colors">
-              Schedule
-            </Link>
-            <Link href="#venues" className="hover:text-[#c8ff2e] transition-colors">
-              Venue
-            </Link>
-          </nav>
-        </div>
-
-        <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/40 font-medium">
-          <p>© 2026 Campus Flow. All rights reserved.</p>
-          <div className="flex gap-6 mt-4 md:mt-0">
-            <Link href="#" className="hover:text-white transition-colors">
-              Terms & Agreements
-            </Link>
-            <Link href="#" className="hover:text-white transition-colors">
-              Privacy Policy
-            </Link>
+          <div className="pt-8 border-t-2 border-black flex flex-col md:flex-row items-center justify-between gap-4 font-bold text-sm">
+            <p>© {new Date().getFullYear()} VenueHub. All rights reserved.</p>
+            <div className="flex gap-6">
+              <Link href="#" className="hover:underline">Privacy Policy</Link>
+              <Link href="#" className="hover:underline">Terms of Service</Link>
+            </div>
           </div>
         </div>
       </footer>
