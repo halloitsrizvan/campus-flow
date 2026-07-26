@@ -55,7 +55,7 @@ export default function IndexPage() {
       </div>
 
       {/* Navbar */}
-      <header className="sticky top-0 z-50 flex h-20 items-center justify-between px-6 lg:px-12 bg-white border-b-4 border-black">
+      <header className="fixed top-0 w-full z-50 flex h-20 items-center justify-between px-6 lg:px-12 bg-white border-b-4 border-black">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 bg-[#c8ff2e] border-2 border-black rounded-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black flex items-center justify-center font-black text-xl">
             V
@@ -97,7 +97,7 @@ export default function IndexPage() {
         </div>
       </header>
 
-      <main className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-16 relative z-10">
+      <main className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-32 relative z-10">
         {/* HERO SECTION */}
         <section className="text-center mb-24 mt-12 relative">
           <div className="absolute top-10 left-10 hidden lg:block w-32 h-32 bg-[#ffcc00] rounded-full border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mix-blend-multiply" />
