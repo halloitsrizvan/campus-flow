@@ -31,7 +31,7 @@ export default function DbProvider({ children }: { children: React.ReactNode }) 
             <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           </div>
           <div>
-            <h2 className="text-sm font-semibold tracking-tight text-foreground">VenueHub</h2>
+            <h2 className="text-sm font-semibold tracking-tight text-foreground">DIIA Flow</h2>
             <p className="mt-1 text-xs text-muted-foreground animate-pulse">
               Syncing with database...
             </p>

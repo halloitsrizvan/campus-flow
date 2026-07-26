@@ -48,7 +48,7 @@ export default function EditProgrammePage({ params }: { params: Promise<{ id: st
 
   return (
     <AppShell>
-      <title>Edit Programme — VenueHub</title>
+      <title>Edit Programme — DIIA Flow</title>
       <meta name="description" content="Edit your submitted programme." />
       <ProgrammeWizard initialData={programme} />
     </AppShell>

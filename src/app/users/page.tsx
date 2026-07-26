@@ -107,7 +107,7 @@ export default function UsersPage() {
 
   return (
     <AppShell>
-      <title>Manage Users — VenueHub</title>
+      <title>Manage Users — DIIA Flow</title>
       <meta name="description" content="Manage system users and access roles." />
       <UsersContent />
     </AppShell>

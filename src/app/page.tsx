@@ -61,7 +61,7 @@ export default function IndexPage() {
             V
           </div>
           <span className="text-xl font-black tracking-tight text-black uppercase">
-            Venue<span className="text-[#c8ff2e] stroke-black">Hub</span>
+            DIIA <span className="text-[#c8ff2e] stroke-black">Flow</span>
           </span>
         </div>
         <nav className="hidden md:flex items-center gap-8 text-sm font-black text-black uppercase tracking-widest">
@@ -138,7 +138,7 @@ export default function IndexPage() {
             {/* Right Countdown Card */}
             <div className="md:col-span-7 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none p-8 flex flex-col justify-between items-start text-left transition-transform active:translate-x-[2px] active:translate-y-[2px]">
               <p className="text-xl text-black font-bold mb-8 max-w-sm leading-relaxed border-l-4 border-primary pl-4">
-                Welcome to VenueHub, the ultimate destination for discovering and booking upcoming
+                Welcome to DIIA Flow, the ultimate destination for discovering and booking upcoming
                 events across campus.
               </p>
 
@@ -316,7 +316,7 @@ export default function IndexPage() {
                 <div className="h-10 w-10 bg-[#c8ff2e] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black flex items-center justify-center font-black text-xl">
                   V
                 </div>
-                <span className="text-2xl font-black tracking-tight uppercase">VenueHub</span>
+                <span className="text-2xl font-black tracking-tight uppercase">DIIA Flow</span>
               </div>
               <p className="font-bold max-w-sm">
                 The ultimate campus event management and venue booking system. Making events happen.
@@ -341,7 +341,7 @@ export default function IndexPage() {
             </div>
           </div>
           <div className="pt-8 border-t-2 border-black flex flex-col md:flex-row items-center justify-between gap-4 font-bold text-sm">
-            <p>© {new Date().getFullYear()} VenueHub. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} DIIA Flow. All rights reserved.</p>
             <div className="flex gap-6">
               <Link href="#" className="hover:underline">Privacy Policy</Link>
               <Link href="#" className="hover:underline">Terms of Service</Link>

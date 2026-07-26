@@ -94,7 +94,7 @@ export default function ProgrammesPage() {
 
   return (
     <AppShell>
-      <title>Programmes — VenueHub</title>
+      <title>Programmes — DIIA Flow</title>
       <meta name="description" content="Browse, filter and manage college programmes." />
       <div className="space-y-6">
         <PageHeader

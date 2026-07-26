@@ -158,7 +158,7 @@ export default function ProgrammeDetailPage() {
 
   return (
     <AppShell>
-      <title>{`${programme.name} — VenueHub`}</title>
+      <title>{`${programme.name} — DIIA Flow`}</title>
       <meta name="description" content="Programme details, approval timeline and comments." />
       <div className={cn("mx-auto max-w-5xl space-y-6", canApprove ? "pb-32 lg:pb-0" : "")}>
         <button

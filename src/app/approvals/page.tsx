@@ -36,7 +36,7 @@ export default function ApprovalsPage() {
 
   return (
     <AppShell>
-      <title>Approvals — VenueHub</title>
+      <title>Approvals — DIIA Flow</title>
       <meta name="description" content="Review and act on pending programme approvals." />
       <div className="space-y-6">
         <PageHeader

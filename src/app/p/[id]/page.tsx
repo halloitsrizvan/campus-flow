@@ -80,8 +80,8 @@ export default function PublicProgrammePage() {
           className="flex items-center gap-2 cursor-pointer transition-opacity hover:opacity-80"
           onClick={() => router.push("/")}
         >
-          <img src="/favicon.ico" alt="VenueHub Logo" className="h-8 w-8 object-contain" />
-          <span className="text-lg font-semibold tracking-tight">VenueHub</span>
+          <img src="/favicon.ico" alt="DIIA Flow Logo" className="h-8 w-8 object-contain" />
+          <span className="text-lg font-semibold tracking-tight">DIIA Flow</span>
         </div>
         <div className="flex items-center gap-4">
           {user ? (

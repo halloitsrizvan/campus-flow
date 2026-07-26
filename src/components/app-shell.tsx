@@ -112,10 +112,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link href="/dashboard" className="flex items-center gap-2">
             <img
               src="/favicon.ico"
-              alt="VenueHub Logo"
+              alt="DIIA Flow Logo"
               className="h-8 w-8 shrink-0 object-contain"
             />
-            <span className="text-lg font-semibold tracking-tight">VenueHub</span>
+            <span className="text-lg font-semibold tracking-tight">DIIA Flow</span>
           </Link>
           <button
             className="lg:hidden text-muted-foreground"

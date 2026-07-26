@@ -10,11 +10,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "VenueHub — College Venue Booking & Programme Management",
+  title: "DIIA Flow — College Venue Booking & Programme Management",
   description:
     "Book venues without conflicts, submit programme budgets, and track approvals end-to-end.",
   openGraph: {
-    title: "VenueHub — College Venue Booking & Programme Management",
+    title: "DIIA Flow — College Venue Booking & Programme Management",
     description:
       "Book venues without conflicts, submit programme budgets, and track approvals end-to-end.",
     type: "website",

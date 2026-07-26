@@ -6,7 +6,7 @@ import { ProgrammeWizard } from "@/components/programme-wizard";
 export default function NewProgrammePage() {
   return (
     <AppShell>
-      <title>Register Programme — VenueHub</title>
+      <title>Register Programme — DIIA Flow</title>
       <meta name="description" content="Submit a new programme for approval." />
       <ProgrammeWizard />
     </AppShell>

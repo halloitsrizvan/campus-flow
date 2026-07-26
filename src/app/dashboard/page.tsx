@@ -43,7 +43,7 @@ import { format } from "date-fns";
 export default function DashboardPage() {
   return (
     <AppShell>
-      <title>Dashboard — VenueHub</title>
+      <title>Dashboard — DIIA Flow</title>
       <meta
         name="description"
         content="Overview of programmes, approvals, budgets and upcoming events."

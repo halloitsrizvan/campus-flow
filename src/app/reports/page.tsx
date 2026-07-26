@@ -71,7 +71,7 @@ export default function ReportsPage() {
 
   return (
     <AppShell>
-      <title>Reports — VenueHub</title>
+      <title>Reports — DIIA Flow</title>
       <meta name="description" content="Programme, venue and budget reports." />
       <div className="space-y-6">
         <PageHeader

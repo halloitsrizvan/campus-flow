@@ -15,7 +15,7 @@ export default function SettingsPage() {
 
   return (
     <AppShell>
-      <title>Settings — VenueHub</title>
+      <title>Settings — DIIA Flow</title>
       <meta name="description" content="Profile and notification preferences." />
       <div className="mx-auto max-w-3xl space-y-6">
         <PageHeader title="Settings" description="Manage your profile and preferences." />

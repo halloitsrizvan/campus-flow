@@ -24,10 +24,10 @@ export default function LoginPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
-      <title>Sign in — VenueHub</title>
+      <title>Sign in — DIIA Flow</title>
       <meta
         name="description"
-        content="Sign in to VenueHub, the college venue booking and programme management platform."
+        content="Sign in to DIIA Flow, the college venue booking and programme management platform."
       />
       <div
         aria-hidden
@@ -37,8 +37,8 @@ export default function LoginPage() {
         {/* Left: brand panel */}
         <div className="hidden flex-col justify-between lg:flex">
           <div className="flex items-center gap-2">
-            <img src="/favicon.ico" alt="VenueHub Logo" className="h-9 w-9 object-contain" />
-            <span className="text-lg font-semibold tracking-tight">VenueHub</span>
+            <img src="/favicon.ico" alt="DIIA Flow Logo" className="h-9 w-9 object-contain" />
+            <span className="text-lg font-semibold tracking-tight">DIIA Flow</span>
           </div>
           <div>
             <h1 className="text-4xl font-semibold leading-tight tracking-tight">
@@ -64,7 +64,7 @@ export default function LoginPage() {
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} VenueHub. College use only.
+            © {new Date().getFullYear()} DIIA Flow. College use only.
           </p>
         </div>
 
@@ -72,8 +72,8 @@ export default function LoginPage() {
         <div className="mx-auto w-full max-w-md">
           <div className="rounded-2xl border bg-card p-6 shadow-lg sm:p-8">
             <div className="lg:hidden mb-6 flex items-center gap-2">
-              <img src="/favicon.ico" alt="VenueHub Logo" className="h-9 w-9 object-contain" />
-              <span className="text-lg font-semibold tracking-tight">VenueHub</span>
+              <img src="/favicon.ico" alt="DIIA Flow Logo" className="h-9 w-9 object-contain" />
+              <span className="text-lg font-semibold tracking-tight">DIIA Flow</span>
             </div>
             <h2 className="text-xl font-semibold tracking-tight">Welcome back</h2>
             <p className="mt-1 text-sm text-muted-foreground">

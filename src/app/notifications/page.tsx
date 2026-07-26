@@ -28,7 +28,7 @@ export default function NotificationsPage() {
 
   return (
     <AppShell>
-      <title>Notifications — VenueHub</title>
+      <title>Notifications — DIIA Flow</title>
       <meta name="description" content="All notifications and activity updates." />
       <div className="space-y-6">
         <PageHeader

@@ -6,7 +6,7 @@ import { VenueCalendar } from "@/components/venue-calendar";
 export default function CalendarPage() {
   return (
     <AppShell>
-      <title>Venue Calendar — VenueHub</title>
+      <title>Venue Calendar — DIIA Flow</title>
       <meta name="description" content="Monthly calendar view of programmes and venue bookings." />
       <div className="space-y-6">
         <PageHeader
