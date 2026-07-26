@@ -358,8 +358,9 @@ export function getScopedProgrammes(
   user: User | null,
   users: User[],
 ): Programme[] {
-  if (!user) return [];
-
+  if (!user) {
+    return programmes.filter((p) => p.status === "booked" || p.status === "completed");
+  }
   if (user.role === "wing") {
     return programmes.filter((p) => p.wing === user.wing || p.wingId === user.id);
   }

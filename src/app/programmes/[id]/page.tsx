@@ -52,6 +52,7 @@ export default function ProgrammeDetailPage() {
   });
   const [newPhoto, setNewPhoto] = useState("");
   const [isUploadingPhotos, setIsUploadingPhotos] = useState(false);
+  const [isEditingReview, setIsEditingReview] = useState(false);
   if (!user) return null;
   if (!programme) {
     return (
@@ -154,6 +155,7 @@ export default function ProgrammeDetailPage() {
       review: reviewData,
     });
     toast.success("Review submitted");
+    setIsEditingReview(false);
   }
 
   return (
@@ -355,10 +357,15 @@ export default function ProgrammeDetailPage() {
             </div>
             {user.role === "union" &&
               (programme.status === "booked" || programme.status === "completed") &&
-              !programme.review && (
-                <div className="rounded-xl border bg-card p-6 shadow-sm">
-                  <h3 className="text-sm font-semibold">Post-Event Review</h3>
-                  <div className="mt-4 space-y-4">
+              (!programme.review || isEditingReview) && (
+                <div className="rounded-xl border bg-card p-6 shadow-sm relative">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-sm font-semibold">{isEditingReview ? "Edit Event Review" : "Post-Event Review"}</h3>
+                    {isEditingReview && (
+                      <Button variant="ghost" size="sm" onClick={() => setIsEditingReview(false)}>Cancel</Button>
+                    )}
+                  </div>
+                  <div className="space-y-4">
                     <div className="space-y-2">
                       <Label>Tier</Label>
                       <Select
@@ -494,9 +501,19 @@ export default function ProgrammeDetailPage() {
                 </div>
               )}
 
-            {programme.review && (
-              <div className="rounded-xl border bg-card p-6 shadow-sm">
-                <h3 className="text-sm font-semibold">Event Review</h3>
+            {programme.review && !isEditingReview && (
+              <div className="rounded-xl border bg-card p-6 shadow-sm relative">
+                <div className="flex justify-between items-start">
+                  <h3 className="text-sm font-semibold">Event Review</h3>
+                  {user.role === "union" && (
+                    <Button variant="outline" size="sm" onClick={() => {
+                      setReviewData(programme.review!);
+                      setIsEditingReview(true);
+                    }}>
+                      Edit Review
+                    </Button>
+                  )}
+                </div>
                 <div className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
                   <div>
                     <div className="text-xs text-muted-foreground">Tier</div>

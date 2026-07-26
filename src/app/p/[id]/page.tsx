@@ -108,7 +108,7 @@ export default function PublicProgrammePage() {
         <Button
           variant="ghost"
           asChild
-          className="mb-8 -ml-4 text-muted-foreground hover:bg-white/5 hover:text-foreground"
+          className="mb-8 -ml-4 text-black hover:bg-black/5 hover:text-black font-bold uppercase tracking-widest"
         >
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home

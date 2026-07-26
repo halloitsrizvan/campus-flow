@@ -7,8 +7,10 @@ import { CalendarDays, MapPin, ArrowRight, Ticket, ArrowUpRight, Play, Globe } f
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { VenueCalendar } from "@/components/venue-calendar";
+import { useRouter } from "next/navigation";
 
 export default function IndexPage() {
+  const router = useRouter();
   const programmes = useApp((s) => s.programmes);
   const user = useApp((s) => s.user);
 
@@ -123,9 +125,10 @@ export default function IndexPage() {
                   Featured By
                 </h3>
                 <div className="space-y-4 text-black font-black text-xl uppercase">
-                  <p className="hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2"><ArrowRight className="w-5 h-5"/> Campus Flow</p>
-                  <p className="hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2"><ArrowRight className="w-5 h-5"/> Student Union</p>
-                  <p className="hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2"><ArrowRight className="w-5 h-5"/> Lisan</p>
+                  <p className="hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2"><ArrowRight className="w-5 h-5"/> Lisan Students Union</p>
+                  <p className="hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2"><ArrowRight className="w-5 h-5"/> Department Student Union</p>
+                  <p className="hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2"><ArrowRight className="w-5 h-5"/> DIIA Staff</p> 
+                  <p className="hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2"><ArrowRight className="w-5 h-5"/> DIIA PTA</p> 
                 </div>
               </div>
               <div className="mt-8 flex items-center justify-center w-24 h-24 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMTAgNTBBMDAgNDAgMCAxIDEgOTAgNTBBMDAgNDAgMCAxIDEgMTAgNTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtZGFzaGFycmF5PSI1LDUiIC8+PC9zdmc+')] bg-contain bg-no-repeat bg-center animate-[spin_10s_linear_infinite]">
@@ -171,13 +174,16 @@ export default function IndexPage() {
                 </div>
               </div>
 
-              <div className="w-full flex border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <button className="flex-1 bg-[#c8ff2e] text-black font-black uppercase tracking-wider py-4 text-sm sm:text-base hover:bg-[#c8ff2e]/80 transition-colors">
+              <div 
+                className="w-full flex border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer group"
+                onClick={() => nextEvent && router.push(`/events/${nextEvent.id}`)}
+              >
+                <div className="flex-1 bg-[#c8ff2e] text-black font-black uppercase tracking-wider py-4 text-sm sm:text-base group-hover:bg-[#c8ff2e]/80 transition-colors flex items-center justify-center">
                   {nextEvent ? `Next: ${nextEvent.name}` : "Book Your Seat"}
-                </button>
-                <button className="bg-black px-6 flex items-center justify-center hover:bg-gray-800 transition-colors border-l-2 border-black">
-                  <ArrowUpRight className="text-white w-6 h-6" />
-                </button>
+                </div>
+                <div className="bg-black px-6 flex items-center justify-center group-hover:bg-gray-800 transition-colors border-l-2 border-black">
+                  <ArrowUpRight className="text-white w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                </div>
               </div>
             </div>
           </div>
@@ -197,15 +203,15 @@ export default function IndexPage() {
               agenda.
             </p>
             <div className="flex gap-4">
-              <Button size="lg" className="rounded-none bg-black text-white hover:bg-black/80 transition-transform active:translate-x-[2px] active:translate-y-[2px]">
-                View All Events
+              <Button size="lg" asChild className="rounded-none bg-black text-white hover:bg-black/80 transition-transform active:translate-x-[2px] active:translate-y-[2px]">
+                <Link href="#events">View All Events</Link>
               </Button>
             </div>
           </div>
           <div className="md:w-1/2 relative">
             <div className="absolute inset-0 bg-[#c8ff2e] translate-x-4 translate-y-4 border-4 border-black" />
             <img
-              src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop"
+              src="https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlhZk2XKQl3xqJb_euh-mGsUU24DNOjHB8DDFwmb7VpIjwJM-wsr5xEw_vIzvN7brv51czUoxZJHZiAM2KBqNqCQ3JAS8faLOpCplzlRP-C-7vESv0DReClLYbSm9PMPVFTI-iy=s680-w680-h510-rw"
               alt="Event crowd"
               className="relative w-full aspect-square object-cover border-4 border-black"
             />
@@ -257,14 +263,23 @@ export default function IndexPage() {
                 const colors = ["bg-[#c8ff2e]", "bg-[#00FFFF]", "bg-[#ffcc00]", "bg-white", "bg-[#10b981]", "bg-[#3b82f6]"];
                 const bgColor = colors[i % colors.length];
                 return (
-                  <div
+                  <Link
+                    href={`/events/${programme.id}`}
                     key={programme.id}
                     className={`group ${bgColor} border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col transition-transform active:translate-x-[2px] active:translate-y-[2px]`}
                   >
                     <div className="aspect-[4/3] border-b-4 border-black relative overflow-hidden bg-white">
-                      <div className="absolute inset-0 flex items-center justify-center font-black text-6xl opacity-10 uppercase text-center rotate-12">
-                        {programme.wing}
-                      </div>
+                      {programme.poster && programme.poster.url ? (
+                        <img 
+                          src={programme.poster.url} 
+                          alt={programme.poster.name || programme.name} 
+                          className="absolute inset-0 w-full h-full object-cover" 
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center font-black text-6xl opacity-10 uppercase text-center rotate-12">
+                          {programme.wing} 
+                        </div>
+                      )}
                       <div className="absolute top-4 left-4 flex gap-2">
                         <span className="bg-black text-white px-3 py-1 font-black text-xs uppercase border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                           {format(new Date(programme.date), "MMM d")}
@@ -278,7 +293,7 @@ export default function IndexPage() {
                       <div>
                         <div className="flex items-center gap-2 text-sm font-bold mb-3 border-b-2 border-black/20 pb-2">
                           <MapPin className="w-4 h-4" />
-                          {venueName(programme.venue)}
+                          {venueName(programme.venueId)}
                         </div>
                         <h3 className="text-2xl font-black uppercase leading-tight mb-2 group-hover:underline decoration-4 underline-offset-4 line-clamp-2">
                           {programme.name}
@@ -287,11 +302,13 @@ export default function IndexPage() {
                           Organized by {programme.wing}
                         </p>
                       </div>
-                      <Button className="w-full bg-black text-white border-2 border-black hover:bg-black/80 font-black uppercase tracking-widest group-hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
-                        <Ticket className="w-4 h-4 mr-2" /> View Details
+                      <Button asChild className="w-full bg-black text-white border-2 border-black hover:bg-black/80 font-black uppercase tracking-widest group-hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+                        <div>
+                          <Ticket className="w-4 h-4 mr-2" /> View Details
+                        </div>
                       </Button>
                     </div>
-                  </div>
+                  </Link>
                 )
               })}
             </div>
