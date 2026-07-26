@@ -104,13 +104,18 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r-2 border-black bg-white text-black transition-transform lg:translate-x-0 shadow-brutal",
+          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r bg-sidebar text-sidebar-foreground transition-transform lg:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex h-16 items-center justify-between border-b-2 border-black bg-primary px-5">
+        <div className="flex h-16 items-center justify-between border-b px-5">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <span className="text-xl font-black uppercase tracking-tight">VenueHub</span>
+            <img
+              src="/favicon.ico"
+              alt="VenueHub Logo"
+              className="h-8 w-8 shrink-0 object-contain"
+            />
+            <span className="text-lg font-semibold tracking-tight">VenueHub</span>
           </Link>
           <button
             className="lg:hidden text-muted-foreground"
@@ -132,10 +137,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                   key={item.to}
                   href={item.to}
                   className={cn(
-                    "flex items-center gap-3 rounded-none border-2 border-transparent px-3 py-2 text-sm font-bold uppercase tracking-widest transition-all",
+                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                     active
-                      ? "border-black bg-accent shadow-brutal-sm text-black translate-x-1"
-                      : "text-black hover:border-black hover:bg-muted hover:shadow-brutal-sm hover:translate-x-1",
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
@@ -151,7 +156,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </nav>
 
-        <div className="border-t-2 border-black p-3 bg-secondary">
+        <div className="border-t p-3">
           <div className="flex items-center gap-3 rounded-md px-2 py-2">
             <Avatar className="h-9 w-9">
               <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
@@ -163,8 +168,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-black uppercase">{user.name}</div>
-              <div className="truncate text-[10px] font-bold uppercase tracking-widest">{roleLabel[user.role]}</div>
+              <div className="truncate text-sm font-medium">{user.name}</div>
+              <div className="truncate text-xs text-muted-foreground">{roleLabel[user.role]}</div>
             </div>
           </div>
         </div>
@@ -179,7 +184,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {/* Main column */}
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b-2 border-black bg-white px-4 lg:px-6">
+        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b bg-background/80 px-4 backdrop-blur lg:px-6">
           <button
             className="lg:hidden text-muted-foreground"
             onClick={() => setMobileOpen(true)}
