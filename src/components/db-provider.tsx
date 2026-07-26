@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useApp } from "@/lib/mock";
 
 export default function DbProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const fetchInitialData = useApp((s) => s.fetchInitialData);
   const [loaded, setLoaded] = useState(false);
 
@@ -22,7 +24,7 @@ export default function DbProvider({ children }: { children: React.ReactNode }) 
       });
   }, [fetchInitialData]);
 
-  if (!loaded) {
+  if (!loaded && pathname !== "/") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4 text-center">
